@@ -37,7 +37,11 @@ class App extends Component {
       balanceEth: 0,
       network: '',
       amountDeposit: 0,
-      amountWithdraw: 0
+      amountWithdraw: 0,
+      ethLoading: false,
+      ethLoading2: false,
+      amountDepositFieldError: false,
+      amountWithdrawFieldError: false
     }
     this.instantiateContract = this.instantiateContract.bind(this);
     this.updateBalanceExchange = this.updateBalanceExchange.bind(this);
@@ -81,7 +85,6 @@ class App extends Component {
     var that = this;
     ExchangeContract.deployed().then(function (instance) {
       exchangeInstance = instance;
-
       return exchangeInstance.getBalance.call(tokenName, { from: that.state.account });
     }).then(function (balance) {
       that.setState({ balanceToken: balance.toNumber() })
@@ -149,7 +152,7 @@ class App extends Component {
     // var amount = parseInt(document.getElementById("inputAmountDepositEther").value);
 
     this.setState({ managementStatus: "Initiating deposit of Ether into your account on the Exchange...Please wait" });
-
+    this.setState({ ethLoading: true })
     var exchangeInstance;
     var that = this;
     ExchangeContract.deployed().then(function (instance) {
@@ -159,14 +162,40 @@ class App extends Component {
       console.log(txResult);
       that.updateBalanceExchange();
       that.setState({ managementStatus: `Ether successfully deposited into your account on the Exchange. Tx id ${txResult.tx}` });
-      that.setState({ amountDeposit: 0 })
+      that.setState({ amountDeposit: 0, ethLoading: false })
     }).catch(function (e) {
       console.log(e);
-      that.setState({ managementStatus: "There was an error depositing Ether into your account on the Exchange" });
+      that.setState({ managementStatus: `There was an error depositing Ether into your account on the Exchange. ${e.message}`, ethLoading: false });
     })
   }
-  handleChange = (e, { name, value }) => this.setState({ [name]: value })
+  //withdraw Ether from exchange function
+  withdrawEthFromExchange() {
+    var that = this;
 
+    that.setState({ managementStatus: "Initiating withdraw of Ether from your account on the Exchange...Please wait", ethLoading2: true });
+
+    var exchangeInstance;
+    ExchangeContract.deployed().then(function (instance) {
+      exchangeInstance = instance;
+      return exchangeInstance.withdrawEther(that.state.web3.toWei(that.state.amountWithdraw, "ether"), { from: that.state.account });
+    }).then(function (txResult) {
+      console.log(txResult);
+      that.updateBalanceExchange();
+      that.setState({ managementStatus: `Ether successfully withdrawn from your account on the Exchange. TX id ${txResult.tx}` });
+      that.setState({ amountWithdraw: 0, ethLoading2: false })
+    }).catch(function (e) {
+      console.log(e);
+      that.setState({ managementStatus: `There was an error withdrawing Ether from your account on the Exchange. ${e.message}`, ethLoading2: false });
+    })
+  }
+  handleChange = (e, { name, value }) => {
+    if (isFinite(value)) {
+      this.setState({ [name]: value, [name + "FieldError"]: false })
+    }
+    else {
+      this.setState({ [name + "FieldError"]: true })
+    }
+  }
   handleSubmitDeposit = () => {
     const { amountDeposit } = this.state;
 
@@ -175,6 +204,7 @@ class App extends Component {
   }
   handleSubmitWithdraw = () => {
     const { amountWithdraw } = this.state
+    this.withdrawEthFromExchange();
 
   }
 
@@ -194,8 +224,9 @@ class App extends Component {
             <Grid.Row columns={2}>
               <Grid.Column>
                 <Header as="h3" >You have {this.state.balanceEth} Ether in your account</Header>
-                <Form onSubmit={this.handleSubmitDeposit}>
+                <Form loading={this.state.ethLoading} onSubmit={this.handleSubmitDeposit}>
                   <Form.Input
+                    error={this.state.amountDepositFieldError}
                     placeholder='Amount to Deposit'
                     name='amountDeposit'
                     value={amountDeposit}
@@ -204,8 +235,9 @@ class App extends Component {
                   <Form.Button color='green' labelPosition='left' icon='money bill alternate outline' content='Deposit' />
 
                 </Form>
-                <Form style={{ marginTop: '20px' }} onSubmit={this.handleSubmitWithdraw}>
+                <Form loading={this.state.ethLoading2} style={{ marginTop: '20px' }} onSubmit={this.handleSubmitWithdraw}>
                   <Form.Input
+                    error={this.state.amountWithdrawFieldError}
                     placeholder='Amount to Withdraw'
                     name='amountWithdraw'
                     value={amountWithdraw}
