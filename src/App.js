@@ -158,7 +158,7 @@ class App extends Component {
     }).then(function (txResult) {
       console.log(txResult);
       that.updateBalanceExchange();
-      that.setState({ managementStatus: "Ether successfully deposited into your account on the Exchange" });
+      that.setState({ managementStatus: `Ether successfully deposited into your account on the Exchange. Tx id ${txResult.tx}` });
       that.setState({ amountDeposit: 0 })
     }).catch(function (e) {
       console.log(e);
