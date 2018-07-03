@@ -2,13 +2,22 @@ import React, { Component } from 'react'
 import getWeb3 from './utils/getWeb3'
 import exchange_artifact from '../build/contracts/Exchange.json';
 import token_artifact from '../build/contracts/FixedSupplyToken.json';
-
+import NavBar from './components/navBar'
+import LandingPage from './components/main'
+import Exchange from './components/exchange'
 import './css/oswald.css'
 import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
+import {
+  Header,
+  Grid,
+  Form,
+  Container,
+  Divider
+} from 'semantic-ui-react'
 
-const contract = require('truffle-contract')
+import { default as contract } from 'truffle-contract';
 var ExchangeContract = contract(exchange_artifact);
 var TokenContract = contract(token_artifact);
 var tokenName = "FIXED";
@@ -22,12 +31,17 @@ class App extends Component {
       storageValue: 0,
       web3: null,
       account: null,
-      status: "",
+      managementStatus: "",
       etherBalance: 0,
       balanceToken: 0,
       balanceEth: 0,
-      network: ''
+      network: '',
+      amountDeposit: 0,
+      amountWithdraw: 0
     }
+    this.instantiateContract = this.instantiateContract.bind(this);
+    this.updateBalanceExchange = this.updateBalanceExchange.bind(this);
+
   }
 
   componentWillMount() {
@@ -51,11 +65,11 @@ class App extends Component {
   }
 
   updateBalanceExchange() {
-    var that = this;
+
     // Get balance 
-    that.state.web3.eth.getBalance(that.state.account, (error, balance) => {
+    this.state.web3.eth.getBalance(this.state.account, (error, balance) => {
       if (!error) {
-        that.setState({ etherBalance: that.state.web3.fromWei(balance.toNumber(), "ether") })
+        this.setState({ etherBalance: this.state.web3.fromWei(balance.toNumber(), "ether") })
       }
       else {
         console.log(error)
@@ -64,8 +78,10 @@ class App extends Component {
     })
 
     var exchangeInstance;
+    var that = this;
     ExchangeContract.deployed().then(function (instance) {
       exchangeInstance = instance;
+
       return exchangeInstance.getBalance.call(tokenName, { from: that.state.account });
     }).then(function (balance) {
       that.setState({ balanceToken: balance.toNumber() })
@@ -84,22 +100,22 @@ class App extends Component {
     this.state.web3.version.getNetwork((err, netId) => {
       switch (netId) {
         case "1":
-          this.setState({ network: "This is the mainnet" })
+          this.setState({ network: "the Mainnet" })
           break
         case "2":
-          this.setState({ network: 'This is the Mordan test network.' })
+          this.setState({ network: 'Mordan test network.' })
           break
         case "3":
-          this.setState({ network: 'This is the Ropsten test network.' })
+          this.setState({ network: 'Ropsten test network.' })
           break
         case "4":
-          this.setState({ network: 'This is the Rinkeby test network.' })
+          this.setState({ network: 'Rinkeby test network.' })
           break
         case "42":
-          this.setState({ network: 'This is the Kovan test network.' })
+          this.setState({ network: 'Kovan test network.' })
           break
         default:
-          this.setState({ network: 'This is an unknown network.' })
+          this.setState({ network: 'an unknown network.' })
       }
     })
     /*
@@ -124,19 +140,89 @@ class App extends Component {
       }
 
       this.setState({ account: accs[0] })
-
       this.updateBalanceExchange()
-
     })
   }
 
+  // deposit ether into Exchange on index.html
+  depositEtherIntoExchange = () => {
+    // var amount = parseInt(document.getElementById("inputAmountDepositEther").value);
+
+    this.setState({ managementStatus: "Initiating deposit of Ether into your account on the Exchange...Please wait" });
+
+    var exchangeInstance;
+    var that = this;
+    ExchangeContract.deployed().then(function (instance) {
+      exchangeInstance = instance;
+      return exchangeInstance.depositEther({ from: that.state.account, to: exchangeInstance.address, value: that.state.web3.toWei(that.state.amountDeposit, "ether") });
+    }).then(function (txResult) {
+      console.log(txResult);
+      that.updateBalanceExchange();
+      that.setState({ managementStatus: "Ether successfully deposited into your account on the Exchange" });
+      that.setState({ amountDeposit: 0 })
+    }).catch(function (e) {
+      console.log(e);
+      that.setState({ managementStatus: "There was an error depositing Ether into your account on the Exchange" });
+    })
+  }
+  handleChange = (e, { name, value }) => this.setState({ [name]: value })
+
+  handleSubmitDeposit = () => {
+    const { amountDeposit } = this.state;
+
+    this.depositEtherIntoExchange();
+
+  }
+  handleSubmitWithdraw = () => {
+    const { amountWithdraw } = this.state
+
+  }
+
+
   render() {
+    const { amountDeposit, amountWithdraw } = this.state
     return (
       <div className="App">
-        <nav className="navbar pure-menu pure-menu-horizontal">
-          <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
-        </nav>
+        <NavBar />
+        <LandingPage metaMask={this.state.web3} address={this.state.account} network={this.state.network} etherBalance={this.state.etherBalance} tokenBalance={this.state.balanceToken} exchangeEther={this.state.balanceEth} />
 
+        <Container>
+          <Header as="h1" textAlign="center">Exchange Account Management</Header>
+          <Divider />
+          <div style={{ textAlign: "center", marginBottom: "15px" }}>{this.state.managementStatus}</div>
+          <Grid>
+            <Grid.Row columns={2}>
+              <Grid.Column>
+                <Header as="h3" >You have {this.state.balanceEth} Ether in your account</Header>
+                <Form onSubmit={this.handleSubmitDeposit}>
+                  <Form.Input
+                    placeholder='Amount to Deposit'
+                    name='amountDeposit'
+                    value={amountDeposit}
+                    onChange={this.handleChange}
+                  />
+                  <Form.Button color='green' labelPosition='left' icon='money bill alternate outline' content='Deposit' />
+
+                </Form>
+                <Form style={{ marginTop: '20px' }} onSubmit={this.handleSubmitWithdraw}>
+                  <Form.Input
+                    placeholder='Amount to Withdraw'
+                    name='amountWithdraw'
+                    value={amountWithdraw}
+                    onChange={this.handleChange}
+                  />
+                  <Form.Button color='green' labelPosition='left' icon='money bill alternate outline' content='Withdraw' />
+
+                </Form>
+
+              </Grid.Column>
+              <Grid.Column>
+                <Header as="h3" >You have {this.state.balanceToken} Tokens in your account</Header>
+
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </Container>
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">

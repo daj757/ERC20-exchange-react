@@ -1,5 +1,5 @@
 // Allows us to use ES6 in our migrations and tests.
-import keys from './keys.js'
+var keys = require('./keys.js');
 require("babel-register");
 var HDWalletProvider = require("truffle-hdwallet-provider");
 module.exports = {
