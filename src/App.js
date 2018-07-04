@@ -75,6 +75,21 @@ class App extends Component {
       })
   }
 
+  // update token balance on managetoken.hmtl
+  updateTokenBalance() {
+    var that = this;
+    var tokenInstance;
+    TokenContract.deployed().then(function (instance) {
+      tokenInstance = instance;
+      return tokenInstance.balanceOf.call(that.state.account);
+    }).then(function (balance) {
+      that.setState({ balanceToken: balance.valueOf() })
+    }).catch(function (e) {
+      console.log(e);
+      that.setState({ managementTokenStatus: "Error getting balance. See log." })
+    })
+  }
+
   updateBalanceExchange() {
 
     // Get balance 
@@ -151,6 +166,7 @@ class App extends Component {
 
       this.setState({ account: accs[0] })
       this.updateBalanceExchange()
+      this.updateTokenBalance()
       this.printImportantInformation()
     })
   }
@@ -262,14 +278,14 @@ class App extends Component {
 
   printImportantInformation() {
     var that = this
-    ExchangeContract.deployed().then(function(instance) {
-      that.setState({exchangeAddress: instance.address});
+    ExchangeContract.deployed().then(function (instance) {
+      that.setState({ exchangeAddress: instance.address });
     })
-    TokenContract.deployed().then(function(instance) {
+    TokenContract.deployed().then(function (instance) {
       console.log(instance.address)
-      that.setState({tokenAddress: instance.address});
+      that.setState({ tokenAddress: instance.address });
     })
-    
+
   }
 
   handleChange = (e, { name, value }) => {
@@ -383,7 +399,7 @@ class App extends Component {
               </Grid.Column>
             </Grid.Row>
           </Grid>
-          <Erc20Management address={this.state.tokenAddress} exchangeAddress={this.state.exchangeAddress} addToken={this.addTokenToExchange.bind(this)} status={this.state.managementTokenStatus}/>
+          <Erc20Management address={this.state.tokenAddress} exchangeAddress={this.state.exchangeAddress} addToken={this.addTokenToExchange.bind(this)} status={this.state.managementTokenStatus} />
         </Container>
         <main className="container">
           <div className="pure-g">

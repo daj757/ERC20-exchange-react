@@ -16,8 +16,9 @@ import {
 export default class Erc20Management extends Component {
     constructor(props) {
         super(props);
-        this.state = { tokenName: "FIXED", tokenAddress: "0xb9472049b46c02940ebf8b1b953942b920b9c064"
- }
+        this.state = {
+            tokenName: "FIXED", tokenAddress: "0xb9472049b46c02940ebf8b1b953942b920b9c064"
+        }
     }
 
     handleChange = (e, { name, value }) => this.setState({ [name]: value })
@@ -28,7 +29,7 @@ export default class Erc20Management extends Component {
         // this.props.addToken(tokenName, address)
 
     }
-    
+
     render() {
         const { tokenName, tokenAddress } = this.state
         return (
@@ -36,8 +37,9 @@ export default class Erc20Management extends Component {
                 <Container>
                     <Header as="h1" textAlign="center">ERC20 Token management</Header>
                     {this.props.status}
+                    <br />
                     {`Exchange address is ${this.props.exchangeAddress}`}
-                    <br/>
+                    <br />
                     {`Token address is ${this.props.address}`}
                     <Divider />
                     <Grid>
