@@ -44,16 +44,21 @@ class App extends Component {
       ethLoading2: false,
       amountDepositFieldError: false,
       amountWithdrawFieldError: false,
+      tokenDepositLoading: false,
+      tokenWithdrawLoading: false,
+      allowanceTokenLoading: false,
       tokenAmountDeposit: 0,
       tokenName: "",
       tokenName2: "",
       tokenAmountWithdraw: 0,
       exchangeAddress: "",
-      tokenAddress: ""
+      tokenAddress: "",
+      tokenAmountAllowance: 0
 
     }
     this.instantiateContract = this.instantiateContract.bind(this);
     this.updateBalanceExchange = this.updateBalanceExchange.bind(this);
+
 
   }
 
@@ -111,7 +116,7 @@ class App extends Component {
       exchangeInstance = instance;
       return exchangeInstance.getBalance.call(tokenName, { from: that.state.account });
     }).then(function (balance) {
-      that.setState({ balanceToken: balance.toNumber() })
+      that.setState({ balanceTokenInExchange: balance.toNumber() })
       return exchangeInstance.getEthBalanceInWei.call({ from: that.state.account });
     }).then(function (balance) {
       that.setState({ balanceEth: that.state.web3.fromWei(balance.toNumber(), "ether") })
@@ -220,7 +225,7 @@ class App extends Component {
     var that = this;
     var symbolName = this.state.tokenName;
     var amount = this.state.tokenAmountDeposit;
-    that.setState({ managementStatus: "Initiating deposit of Token into your account on the Exchange....Please wait" });
+    that.setState({ managementStatus: "Initiating deposit of Token into your account on the Exchange....Please wait", tokenDepositLoading: true });
     var exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
       exchangeInstance = instance;
@@ -228,10 +233,10 @@ class App extends Component {
     }).then(function (txResult) {
       console.log(txResult);
       that.updateBalanceExchange();
-      that.setState({ managementStatus: "Token(s) successfully deposited into your account on the Exchange" });
+      that.setState({ managementStatus: "Token(s) successfully deposited into your account on the Exchange", tokenDepositLoading: false });
     }).catch(function (e) {
       console.log(e);
-      that.setState({ managementStatus: "There was an error depositing Token into your account on the Exchange" });
+      that.setState({ managementStatus: "There was an error depositing Token into your account on the Exchange", tokenDepositLoading: false });
     })
   }
 
@@ -242,7 +247,10 @@ class App extends Component {
     let symbolName = that.state.tokenName2;
     let amount = that.state.tokenAmountWithdraw;
 
-    that.setState({ managementStatus: "Initiating withdrawal of Token from your account on the Exchange...Please wait" });
+    that.setState({
+      managementStatus: "Initiating withdrawal of Token from your account on the Exchange...Please wait",
+      tokenWithdrawLoading: true
+    });
 
     let exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
@@ -251,31 +259,30 @@ class App extends Component {
     }).then(function (txResult) {
       console.log(txResult);
       that.updateBalanceExchange();
-      that.setState({ managementStatus: "Token(s) successfully withdrawn from your account on the Exchange" });
+      that.setState({ managementStatus: "Token(s) successfully withdrawn from your account on the Exchange", tokenWithdrawLoading: false });
     }).catch(function (e) {
       console.log(e);
-      that.setState({ managementStatus: "There was an error withdrawing Token(s) from your account on the Exchange" });
+      that.setState({ managementStatus: "There was an error withdrawing Token(s) from your account on the Exchange", tokenWithdrawLoading: false });
     })
   }
 
   // allow an address to receive tokens from FixedSupplyToken on managetoken.html
-  allowanceToken(allowance, address) {
-    let amount = allowance
-    let receiver = address
+  allowanceToken() {
     var that = this;
-
-    that.setState({ managementTokenStatus: "Initiating allowance of token...please wait" });
-
+    let amount = that.state.tokenAmountAllowance;
+    let receiver = that.state.exchangeAddress;
+    that.setState({ allowanceTokenLoading: true, managementTokenStatus: "Initiating allowance of token...please wait" });
     let tokenInstance;
     TokenContract.deployed().then(function (instance) {
+      console.log(instance, receiver, amount, that.state.account, that.state.allowanceTokenLoading)
       tokenInstance = instance;
-      tokenInstance.approve(receiver, amount, { from: that.state.account });
+      return tokenInstance.approve(receiver, amount, { from: that.state.account });
     }).then(function (txResults) {
       console.log(txResults)
-      that.setState({ managementTokenStatus: "Token allowance accepted" });
+      that.setState({ allowanceTokenLoading: false, managementTokenStatus: "Token allowance accepted" });
     }).catch(function (e) {
       console.log(e);
-      that.setState({ managementTokenStatus: "Token allowance rejected" });
+      that.setState({ allowanceTokenLoading: false, managementTokenStatus: "Token allowance rejected" });
     })
   }
   //Add ERC20 token to exchange
@@ -319,6 +326,12 @@ class App extends Component {
     else {
       this.setState({ [name + "FieldError"]: true })
     }
+  }
+
+  handleTokenAllowance = () => {
+    const { allowanceTokenLoading } = this.state
+    this.allowanceToken()
+
   }
 
   handleChangeLetters = (e, { name, value }) => {
@@ -387,7 +400,7 @@ class App extends Component {
               <Grid.Column>
                 <Header as="h3" >Deposit any custom ERC20 token below. First head to ERC20 token management to add a token.</Header>
                 <Header as="h4" >You have {this.state.balanceTokenInExchange} Tokens in the exchange.</Header>
-                <Form loading={this.state.tokenLoading} style={{ marginTop: '20px' }} onSubmit={this.handleTokenDeposit}>
+                <Form loading={this.state.tokenDepositLoading} style={{ marginTop: '20px' }} onSubmit={this.handleTokenDeposit}>
                   <Form.Input
                     placeholder='Token Name'
                     name='tokenName'
@@ -403,7 +416,7 @@ class App extends Component {
                   </Form.Input>
                   <Form.Button color='blue' labelPosition='left' icon='money bill alternate outline' content='Deposit' />
                 </Form>
-                <Form loading={this.state.tokenLoading} style={{ marginTop: '20px' }} onSubmit={this.handleTokenWithdraw}>
+                <Form loading={this.state.tokenWithdrawLoading} style={{ marginTop: '20px' }} onSubmit={this.handleTokenWithdraw}>
                   <Form.Input
                     placeholder='Token Name'
                     name='tokenName2'
@@ -423,7 +436,16 @@ class App extends Component {
               </Grid.Column>
             </Grid.Row>
           </Grid>
-          <Erc20Management allowanceToken={this.allowanceToken.bind(this)} address={this.state.tokenAddress} exchangeAddress={this.state.exchangeAddress} addToken={this.addTokenToExchange.bind(this)} status={this.state.managementTokenStatus} tokenAmount={this.state.balanceToken} />
+          <Erc20Management handleChange={this.handleChange.bind(this)}
+            handleLetterChange={this.handleChangeLetters.bind(this)}
+            allowanceToken={this.allowanceToken.bind(this)}
+            address={this.state.tokenAddress} exchangeAddress={this.state.exchangeAddress}
+            addToken={this.addTokenToExchange.bind(this)}
+            status={this.state.managementTokenStatus}
+            tokenAmount={this.state.balanceToken}
+            loading={this.state.allowanceTokenLoading}
+            handleTokenAllowance={this.handleTokenAllowance.bind(this)}
+            tokenAmountAllowance={this.state.tokenAmountAllowance} />
         </Container>
         <main className="container">
           <div className="pure-g">
