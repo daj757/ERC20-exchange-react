@@ -25,10 +25,10 @@ export default function Erc20TokenManagement(props) {
                 {`Token address is ${props.address}`}
                 <Divider />
                 <Grid>
-                    <Grid.Row columns={2}>
+                    <Grid.Row columns={3}>
                         <Grid.Column>
                             <Header as="h3" >Add token to exchange</Header>
-                            <Form loading={false} onSubmit={props.handleTokenAddition}>
+                            <Form loading={props.loadingAdd} onSubmit={props.handleTokenAddition}>
                                 <Form.Input
                                     placeholder='Token Name'
                                     name='tokenName'
@@ -68,6 +68,25 @@ export default function Erc20TokenManagement(props) {
 
                             </Form>
 
+                        </Grid.Column>
+                        <Grid.Column>
+                            <Header as="h3" >Send Tokens to Someone</Header>
+                            <Form loading={props.loadingSend} onSubmit={props.handleSend}>
+                                <Form.Input
+                                    placeholder='Token Amount'
+                                    name='sendAmount'
+                                    value={props.sendAddress}
+                                    onChange={props.handleChange}
+                                />
+                                <Form.Input
+                                    placeholder="Token Address"
+                                    name="sendAddress"
+                                    value={props.sendAddress}
+                                    onChange={props.handleLetterChange}
+                                />
+                                <Form.Button color='blue' labelPosition='left' icon='add' content='Send Token' />
+
+                            </Form>
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>

@@ -5,6 +5,9 @@ import token_artifact from '../build/contracts/FixedSupplyToken.json';
 import NavBar from './components/navBar'
 import LandingPage from './components/main'
 import Erc20Management from './components/ERC20TokenManagement'
+import ExchangeManagement from './components/ExchangeManagement'
+import TokenTrading from './components/TokenTrading'
+import Footer from './components/Footer'
 import './css/oswald.css'
 import './css/open-sans.css'
 import './css/pure-min.css'
@@ -47,13 +50,24 @@ class App extends Component {
       tokenDepositLoading: false,
       tokenWithdrawLoading: false,
       allowanceTokenLoading: false,
+      loadingSendToken: false,
+      loadingAddToken: false,
       tokenAmountDeposit: 0,
       tokenName: "",
       tokenName2: "",
       tokenAmountWithdraw: 0,
       exchangeAddress: "",
       tokenAddress: "",
-      tokenAmountAllowance: 0
+      tokenAmountAllowance: 0,
+      sendAmount: 0,
+      sendAddress: "",
+      tokenTradingStatus: "",
+      tokenNameToBuy: "",
+      tokenAmountToBuy: 0,
+      tokenNameToSell: "",
+      tokenAmountToSell: 0,
+      tokenPriceToBuy: 0,
+      tokenPriceToSell: 0
 
     }
     this.instantiateContract = this.instantiateContract.bind(this);
@@ -225,6 +239,7 @@ class App extends Component {
     var that = this;
     var symbolName = this.state.tokenName;
     var amount = this.state.tokenAmountDeposit;
+
     that.setState({ managementStatus: "Initiating deposit of Token into your account on the Exchange....Please wait", tokenDepositLoading: true });
     var exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
@@ -246,7 +261,6 @@ class App extends Component {
 
     let symbolName = that.state.tokenName2;
     let amount = that.state.tokenAmountWithdraw;
-
     that.setState({
       managementStatus: "Initiating withdrawal of Token from your account on the Exchange...Please wait",
       tokenWithdrawLoading: true
@@ -291,7 +305,7 @@ class App extends Component {
     let nameOfToken = tokenName;
     let addressOfToken = address;
 
-    that.setState({ managementTokenStatus: "Initiating addition of Token to Exchange...please wait" })
+    that.setState({ loadingAddToken: true, managementTokenStatus: "Initiating addition of Token to Exchange...please wait" })
 
     var exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
@@ -300,10 +314,88 @@ class App extends Component {
     }).then(function (txResult) {
       console.log(txResult);
       that.updateTokenBalance()
-      that.setState({ managementTokenStatus: "Token succesfully added to Exchange" });
+      that.setState({ loadingAddToken: false, managementTokenStatus: "Token succesfully added to Exchange" });
     }).catch(function (e) {
       console.log(e);
-      that.setState({ managementTokenStatus: "There was an error adding Token to the Exchange. See logs" });
+      that.setState({ loadingAddToken: false, managementTokenStatus: "There was an error adding Token to the Exchange. See logs" });
+    })
+  }
+
+  // send token to an address on managetoken.html
+  sendToken() {
+    var that = this
+    var amount = that.state.sendAmount;
+    var receiver = that.state.sendAddres;
+
+    that.setState({ loadingSendToken: true, managementTokenStatus: "Initiating transaction...please wait" });
+
+    var tokenInstance;
+    TokenContract.deployed().then(function (instance) {
+      tokenInstance = instance;
+      return tokenInstance.transfer(receiver, amount, { from: that.state.account });
+    }).then(function (txResults) {
+      that.setState({ loadingSendToken: false, managementTokenStatus: "Transfer complete!" });
+      that.updateTokenBalance();
+    }).catch(function (e) {
+      console.log(e);
+      that.setStatus({ loadingSendToken: false, managementTokenStatus: "Error sending coin. See log." });
+    })
+  }
+
+  buyToken() {
+    var that = this;
+
+    var symbolName = that.state.tokenNameToBuy;
+    var priceInWei = that.state.tokenPriceToBuy
+    var amount = that.state.tokenAmountToBuy
+
+    that.setState({ tokenTradingStatus: "Attempting to buy token on Exchange" });
+
+    var exchangeInstance;
+    ExchangeContract.deployed().then(function (instance) {
+      exchangeInstance = instance;
+      return exchangeInstance.buyToken(symbolName, priceInWei, amount, { from: that.state.account });
+    }).then(function (txResult) {
+      console.log(txResult);
+      if (txResult.logs[0].event == "buyOfferCreated") {
+        that.setState({ tokenTradingStatus: "Buy order succesfully created" });
+      }
+      if (txResult.logs[0].event == "buyOrderFulfilled") {
+        that.setState({ tokenTradingStatus: "Token(s) successfully purchased" });
+      }
+      that.updateBalanceExchange();
+    }).catch(function (e) {
+      console.log(e);
+      that.setState({ tokenTradingStatus: "There was an error attempting to create a buy order" });
+    })
+  }
+
+  // sell token on Exchange on trading.html
+  sellToken() {
+    var that = this;
+
+    var symbolName = that.state.tokenNameToSell;
+    var priceInWei = that.state.tokenPriceToSell;
+    var amount = that.state.tokenAmountToSell;
+
+    that.setState({tokenTradingStatus:"Attempting to sell token on Exchange"});
+
+    var exchangeInstance;
+    ExchangeContract.deployed().then(function (instance) {
+      exchangeInstance = instance;
+      return exchangeInstance.sellToken(symbolName, priceInWei, amount, { from: account });
+    }).then(function (txResult) {
+      console.log(txResult);
+      if (txResult.logs[0].event == "sellOfferCreated") {
+        self.setStatus("Buy order succesfully created");
+      }
+      if (txResult.logs[0].event == "sellOrderFulfilled") {
+        self.setStatus("Token(s) successfully purchased");
+      }
+      App.updateBalanceExchange();
+    }).catch(function (e) {
+      console.log(e);
+      self.setStatus("There was an error attempting to create a sell order");
     })
   }
 
@@ -326,6 +418,9 @@ class App extends Component {
     else {
       this.setState({ [name + "FieldError"]: true })
     }
+  }
+  handleSend = () => {
+    this.sendToken()
   }
 
   handleTokenAllowance = () => {
@@ -362,108 +457,54 @@ class App extends Component {
     return (
       <div className="App">
         <NavBar />
-        <LandingPage metaMask={this.state.web3} address={this.state.account} network={this.state.network} etherBalance={this.state.etherBalance} tokenBalanceInExchange={this.state.balanceTokenInExchange} tokenBalance={this.state.balanceToken} exchangeEther={this.state.balanceEth} />
-
-        <Container>
-          <Header as="h1" textAlign="center">Exchange Account Management</Header>
-          <Divider />
-          <div style={{ textAlign: "center", marginBottom: "15px" }}>{this.state.managementStatus}</div>
-          <Grid>
-            <Grid.Row columns={2}>
-              <Grid.Column>
-                <Header as="h3" >Deposit and withdraw Ether from exchange.</Header>
-                <Header as="h4" >You have {this.state.balanceEth} Ether in your account</Header>
-                <Form loading={this.state.ethLoading} onSubmit={this.handleSubmitDeposit}>
-                  <Form.Input
-                    error={this.state.amountDepositFieldError}
-                    placeholder='Amount to Deposit'
-                    name='amountDeposit'
-                    value={amountDeposit}
-                    onChange={this.handleChange}
-                  />
-                  <Form.Button color='green' labelPosition='left' icon='money bill alternate outline' content='Deposit' />
-
-                </Form>
-                <Form loading={this.state.ethLoading2} style={{ marginTop: '20px' }} onSubmit={this.handleSubmitWithdraw}>
-                  <Form.Input
-                    error={this.state.amountWithdrawFieldError}
-                    placeholder='Amount to Withdraw'
-                    name='amountWithdraw'
-                    value={amountWithdraw}
-                    onChange={this.handleChange}
-                  />
-                  <Form.Button color='green' labelPosition='left' icon='money bill alternate outline' content='Withdraw' />
-
-                </Form>
-
-              </Grid.Column>
-              <Grid.Column>
-                <Header as="h3" >Deposit any custom ERC20 token below. First head to ERC20 token management to add a token.</Header>
-                <Header as="h4" >You have {this.state.balanceTokenInExchange} Tokens in the exchange.</Header>
-                <Form loading={this.state.tokenDepositLoading} style={{ marginTop: '20px' }} onSubmit={this.handleTokenDeposit}>
-                  <Form.Input
-                    placeholder='Token Name'
-                    name='tokenName'
-                    value={tokenName}
-                    onChange={this.handleChangeLetters}>
-                  </Form.Input>
-                  <Form.Input
-                    error={this.state.amountTokenFieldError}
-                    placeholder='Amount to Deposit'
-                    name='tokenAmountDeposit'
-                    value={tokenAmountDeposit}
-                    onChange={this.handleChange}>
-                  </Form.Input>
-                  <Form.Button color='blue' labelPosition='left' icon='money bill alternate outline' content='Deposit' />
-                </Form>
-                <Form loading={this.state.tokenWithdrawLoading} style={{ marginTop: '20px' }} onSubmit={this.handleTokenWithdraw}>
-                  <Form.Input
-                    placeholder='Token Name'
-                    name='tokenName2'
-                    value={tokenName2}
-                    onChange={this.handleChangeLetters}>
-                  </Form.Input>
-                  <Form.Input
-                    error={this.state.amountTokenFieldError}
-                    placeholder='Amount to Withdraw'
-                    name='tokenAmountWithdraw'
-                    value={tokenAmountWithdraw}
-                    onChange={this.handleChange}>
-                  </Form.Input>
-                  <Form.Button color='blue' labelPosition='left' icon='money bill alternate outline' content='Withdraw' />
-                </Form>
-
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-          <Erc20Management handleChange={this.handleChange.bind(this)}
-            handleLetterChange={this.handleChangeLetters.bind(this)}
-            allowanceToken={this.allowanceToken.bind(this)}
-            address={this.state.tokenAddress} exchangeAddress={this.state.exchangeAddress}
-            addToken={this.addTokenToExchange.bind(this)}
-            status={this.state.managementTokenStatus}
-            tokenAmount={this.state.balanceToken}
-            loading={this.state.allowanceTokenLoading}
-            handleTokenAllowance={this.handleTokenAllowance.bind(this)}
-            tokenAmountAllowance={this.state.tokenAmountAllowance} />
-        </Container>
-        <main className="container">
-          <div className="pure-g">
-            <div className="pure-u-1-1">
-              <h1>Good to Go!</h1>
-              <p>Your Truffle Box is installed and ready.</p>
-              <h2>Smart Contract Example</h2>
-              <p>If your contracts compiled and migrated successfully, below will show a stored value of 5 (by default).</p>
-              <p>Try changing the value stored on <strong>line 59</strong> of App.js.</p>
-              <p>The stored value is: {this.state.account}</p>
-              <p>{this.state.status}</p>
-              <p>Ether Balance: {this.state.balanceEth}</p>
-              <p>Token Balance: {this.state.balanceToken}</p>
-              <p>Network: {this.state.network}</p>
-              <p>Ether balance in wallet: {this.state.etherBalance}</p>
-            </div>
-          </div>
-        </main>
+        <LandingPage metaMask={this.state.web3}
+          address={this.state.account} network={this.state.network}
+          etherBalance={this.state.etherBalance}
+          tokenBalanceInExchange={this.state.balanceTokenInExchange}
+          tokenBalance={this.state.balanceToken}
+          exchangeEther={this.state.balanceEth} />
+        <ExchangeManagement managementStatus={this.state.managementStatus}
+          ethLoading={this.state.ethLoading} balanceEth={this.state.balanceEth}
+          handleTokenDeposit={this.handleTokenDeposit.bind(this)}
+          handleSubmitDeposit={this.handleSubmitDeposit.bind(this)}
+          handleSubmitWithdraw={this.handleSubmitWithdraw.bind(this)}
+          amountDepositFieldError={this.state.amountDepositFieldError}
+          amountDeposit={this.state.amountDeposit}
+          handleChange={this.handleChange.bind(this)}
+          ethLoading2={this.state.ethLoading2}
+          amountWithdraw={this.state.amountWithdraw}
+          amountWithdrawFieldError={this.state.amountWithdrawFieldError}
+          handleSubmitWithdraw={this.handleSubmitWithdraw.bind(this)}
+          balanceTokenInExchange={this.state.balanceTokenInExchange}
+          handleTokenWithdraw={this.handleTokenWithdraw.bind(this)}
+          handleChangeLetters={this.handleChangeLetters.bind(this)}
+          etherBalance={this.state.etherBalance}
+        />
+        <Erc20Management handleChange={this.handleChange.bind(this)}
+          handleLetterChange={this.handleChangeLetters.bind(this)}
+          allowanceToken={this.allowanceToken.bind(this)}
+          address={this.state.tokenAddress} exchangeAddress={this.state.exchangeAddress}
+          addToken={this.addTokenToExchange.bind(this)}
+          status={this.state.managementTokenStatus}
+          tokenAmount={this.state.balanceToken}
+          loading={this.state.allowanceTokenLoading}
+          handleTokenAllowance={this.handleTokenAllowance.bind(this)}
+          tokenAmountAllowance={this.state.tokenAmountAllowance}
+          handleSend={this.handleSend.bind(this)}
+          loadingSend={this.state.loadingSendToken}
+          loadingAdd={this.state.loadingAddToken} />
+        <TokenTrading
+          etherBalance={this.state.balanceEth}
+          tokenBalanceInExchange={this.state.balanceTokenInExchange}
+          status={this.state.tokenTradingStatus}
+          tokenNameToBuy={this.state.tokenNameToBuy}
+          tokenAmountToBuy={this.state.tokenAmountToBuy}
+          tokenNameToSell={this.state.tokenNameToSell}
+          tokenAmountToSell={this.state.tokenAmountToSell}
+          handleChange={this.handleChange.bind(this)}
+          handleLetterChange={this.handleChangeLetters.bind(this)}
+        />
+        <Footer />
       </div>
     );
   }

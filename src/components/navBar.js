@@ -14,48 +14,49 @@ export default class Header extends Component {
                 <Responsive minWidth={768}>
                     <Menu
                         style={{ fontFamily: 'Russo One, sans-serif' }}
-                        borderless={true}
                         inverted
                         fluid
-                        widths={7}
                         fixed="top"
                     >
 
                         <Menu.Item
-                            name="about-us"
-                            active={activeItem === 'about-us'}
+                            name="tokenExchange"
+                            active={activeItem === 'tokenExchange'}
                             onClick={this.handleItemClick}
                             link={true}
-                            href="#about-us"
+                            href="#token-exchange"
+                            header
                         >
-                            About Exchange
+                            Decentralized Token Exchange
+            </Menu.Item>
+                        <Menu.Menu position="right">
+
+                            <Menu.Item
+                                name="accountManagement"
+                                active={activeItem === 'accountManagement'}
+                                onClick={this.handleItemClick}
+                                href="#account-management"
+                            >
+                                Account Management
             </Menu.Item>
 
-                        <Menu.Item
-                            name="our-people"
-                            active={activeItem === 'our-people'}
-                            onClick={this.handleItemClick}
-                            href="#our-people"
-                        >
-                            Our People
+                            <Menu.Item
+                                name="tokenManagement"
+                                active={activeItem === 'tokenManagement'}
+                                onClick={this.handleItemClick}
+                                href="#token-management"
+                            >
+                                Token Management
             </Menu.Item>
-
-                        <Menu.Item
-                            name="our-process"
-                            active={activeItem === 'our-process'}
-                            onClick={this.handleItemClick}
-                            href="#process"
-                        >
-                            Our Process
+                            <Menu.Item
+                                name="tokenTrading"
+                                active={activeItem === 'tokenTrading'}
+                                onClick={this.handleItemClick}
+                                href="#token-trading"
+                            >
+                                Token Trading
             </Menu.Item>
-                        <Menu.Item
-                            name="how-it-works"
-                            active={activeItem === 'how-it-works'}
-                            onClick={this.handleItemClick}
-                            href="#how-it-works"
-                        >
-                            How it works
-            </Menu.Item>
+                        </Menu.Menu>
                     </Menu>
                 </Responsive>
                 <Responsive {...Responsive.onlyMobile}>
@@ -71,10 +72,11 @@ export default class Header extends Component {
                                     marginRight: '15px',
                                     marginTop: '10px',
                                     fontSize: '20px',
+
                                 }}
                                 icon="bars"
                             >
-                                <Dropdown.Menu>
+                                <Dropdown.Menu >
                                     <Dropdown.Item
                                         name="our-people"
                                         active={activeItem === 'our-people'}
@@ -89,7 +91,7 @@ export default class Header extends Component {
                                         onClick={this.handleItemClick}
                                         href="#process"
                                     >
-                                        Our Process
+                                        Metamask
                   </Dropdown.Item>
                                     <Dropdown.Item
                                         name="how-it-workds"
@@ -107,14 +109,7 @@ export default class Header extends Component {
                                     >
                                         Employment
                   </Dropdown.Item>
-                                    <Dropdown.Item
-                                        name="contact"
-                                        active={activeItem === 'contact'}
-                                        onClick={this.handleItemClick}
-                                        href="#contact"
-                                    >
-                                        Contact
-                  </Dropdown.Item>
+
                                 </Dropdown.Menu>
                             </Dropdown>
                         </Menu.Menu>
