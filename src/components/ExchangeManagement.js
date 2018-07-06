@@ -8,8 +8,29 @@ import {
     Container,
     Divider,
     Grid,
-    Form
+    Form,
+    Message
 } from 'semantic-ui-react'
+function MainMessage(props) {
+    switch (props.managementState) {
+        case "info":
+            return <Message info>
+                <Message.Header>{props.managementStatus}</Message.Header>
+                <p>This may take a few moments </p>
+            </Message>
+        case "success":
+            return <Message positive>
+                <Message.Header>{props.managementStatus}</Message.Header>
+            </Message>
+        case "error":
+            return <Message negative>
+                <Message.Header>{props.managementStatus}</Message.Header>
+
+            </Message>
+        default:
+            return null
+    }
+}
 export default function ExchangeManagement(props) {
 
     return (
@@ -17,13 +38,13 @@ export default function ExchangeManagement(props) {
             <Container>
                 <Header as="h1" textAlign="center">Exchange Account Management</Header>
                 <Divider />
-                <div style={{ textAlign: "center", marginBottom: "15px" }}>{props.managementStatus}</div>
+                <MainMessage managementState={props.managementState} managementStatus={props.managementStatus} />
                 <Grid>
                     <Grid.Row columns={2}>
                         <Grid.Column>
                             <Header as="h3" >Deposit and withdraw Ether from exchange.</Header>
                             <Header as="h4" >You have {props.balanceEth} Ether in the exchange.</Header>
-                            {/* <Header as="h4" >You have {props.etherBalance} Ether in your account.</Header> */}
+
                             <Form loading={props.ethLoading} onSubmit={props.handleSubmitDeposit}>
                                 <Form.Input
                                     error={props.amountDepositFieldError}
