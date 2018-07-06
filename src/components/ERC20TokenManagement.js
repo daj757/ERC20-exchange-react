@@ -10,16 +10,36 @@ import {
     Icon,
     Divider,
     Grid,
-    Form
+    Form,
+    Message
 } from 'semantic-ui-react'
+
+function TokenMessage(props) {
+    switch (props.tokenState) {
+        case "info":
+            return <Message info>
+                <Message.Header>{props.status}</Message.Header>
+                <p>This may take a few moments </p>
+            </Message>
+        case "success":
+            return <Message positive>
+                <Message.Header>{props.status}</Message.Header>
+            </Message>
+        case "error":
+            return <Message negative>
+                <Message.Header>{props.status}</Message.Header>
+
+            </Message>
+        default:
+            return null
+    }
+}
 export default function Erc20TokenManagement(props) {
 
     return (
         <div>
             <Container>
                 <Header as="h1" textAlign="center">ERC20 Token management</Header>
-
-                {props.status}
                 <Segment color="blue">
                     <Header as='h4' textAlign='center'>
                         {`Token address is ${props.address}`}
@@ -29,7 +49,7 @@ export default function Erc20TokenManagement(props) {
                     </Header>
                     <Header as="h4" textAlign="center" >You have {props.tokenAmount} Tokens in your account</Header>
                 </Segment>
-
+                <TokenMessage status={props.status} tokenState={props.tokenState} />
                 <Grid verticalAlign="middle">
                     <Grid.Row columns={3}>
                         <Grid.Column>

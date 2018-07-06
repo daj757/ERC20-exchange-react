@@ -10,16 +10,36 @@ import {
     Icon,
     Divider,
     Grid,
-    Form
+    Form,
+    Message
 } from 'semantic-ui-react'
+
+function TradeMessage(props) {
+    switch (props.tradeState) {
+        case "info":
+            return <Message info>
+                <Message.Header>{props.status}</Message.Header>
+                <p>This may take a few moments </p>
+            </Message>
+        case "success":
+            return <Message positive>
+                <Message.Header>{props.status}</Message.Header>
+            </Message>
+        case "error":
+            return <Message negative>
+                <Message.Header>{props.status}</Message.Header>
+
+            </Message>
+        default:
+            return null
+    }
+}
 export default function TokenTrading(props) {
 
     return (
         <div>
             <Container>
                 <Header as="h1" textAlign="center">Token Trading</Header>
-            
-                {props.status}
                 <Segment color="blue">
                     <Header as='h4' textAlign='center'>
                         {`You have ${props.etherBalance} Ether in the exchange.`}
@@ -28,12 +48,13 @@ export default function TokenTrading(props) {
                         {`You have ${props.tokenBalanceInExchange} tokens in the Exchange`}
                     </Header>
                 </Segment>
+                <TradeMessage status={props.status} tradeState={props.tradeState} />
 
                 <Grid>
                     <Grid.Row columns={2}>
                         <Grid.Column>
                             <Header as="h3" >Buy Token</Header>
-                            <Form loading={props.loadingAdd} onSubmit={props.buyToken}>
+                            <Form loading={props.buyLoading} onSubmit={props.buyToken}>
                                 <Form.Input
                                     placeholder='Token Name'
                                     name='tokenNameToBuy'
@@ -60,7 +81,7 @@ export default function TokenTrading(props) {
                         </Grid.Column>
                         <Grid.Column>
                             <Header as="h4" >Sell Token</Header>
-                            <Form loading={props.loading} onSubmit={props.sellToken}>
+                            <Form loading={props.sellLoading} onSubmit={props.sellToken}>
                                 <Form.Input
                                     placeholder='Token Name'
                                     name='tokenNameToSell'

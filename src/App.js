@@ -36,6 +36,7 @@ class App extends Component {
       account: null,
       managementStatus: "",
       managementState: "",
+      tokenState: "",
       managementTokenStatus: "",
       etherBalance: 0,
       balanceToken: 0,
@@ -65,6 +66,7 @@ class App extends Component {
       sendAmount: 0,
       sendAddress: "",
       tokenTradingStatus: "",
+      tradeState: "",
       tokenNameToBuy: "",
       tokenAmountToBuy: 0,
       tokenNameToSell: "",
@@ -72,7 +74,9 @@ class App extends Component {
       tokenPriceToBuy: 0,
       tokenPriceToSell: 0,
       sellOrders: null,
-      buyOrders: null
+      buyOrders: null,
+      buyLoading: false,
+      sellLoading: false
 
     }
     this.instantiateContract = this.instantiateContract.bind(this);
@@ -112,7 +116,7 @@ class App extends Component {
       that.setState({ balanceToken: balance.valueOf() })
     }).catch(function (e) {
       console.log(e);
-      that.setState({ managementTokenStatus: "Error getting balance. See log." })
+      that.setState({ tokenState:"error", managementTokenStatus: "Error getting balance. See log." })
     })
   }
 
@@ -292,7 +296,7 @@ class App extends Component {
     var that = this;
     let amount = that.state.tokenAmountAllowance;
     let receiver = that.state.exchangeAddress;
-    that.setState({ managementState: "info", allowanceTokenLoading: true, managementTokenStatus: "Initiating allowance of token...please wait" });
+    that.setState({ tokenState: "info", allowanceTokenLoading: true, managementTokenStatus: "Initiating allowance of token...please wait" });
     let tokenInstance;
     TokenContract.deployed().then(function (instance) {
       console.log(instance, receiver, amount, that.state.account, that.state.allowanceTokenLoading)
@@ -300,10 +304,10 @@ class App extends Component {
       return tokenInstance.approve(receiver, amount, { from: that.state.account });
     }).then(function (txResults) {
       console.log(txResults)
-      that.setState({ managementState: "success", allowanceTokenLoading: false, managementTokenStatus: "Token allowance accepted" });
+      that.setState({ tokenState: "success", allowanceTokenLoading: false, managementTokenStatus: "Token allowance accepted" });
     }).catch(function (e) {
       console.log(e);
-      that.setState({ managementState: "error", allowanceTokenLoading: false, managementTokenStatus: "Token allowance rejected" });
+      that.setState({ tokenState: "error", allowanceTokenLoading: false, managementTokenStatus: "Token allowance rejected" });
     })
   }
   //Add ERC20 token to exchange
@@ -312,7 +316,7 @@ class App extends Component {
     let nameOfToken = tokenName;
     let addressOfToken = address;
 
-    that.setState({ loadingAddToken: true, managementTokenStatus: "Initiating addition of Token to Exchange...please wait" })
+    that.setState({ tokenState:"info", loadingAddToken: true, managementTokenStatus: "Initiating addition of Token to Exchange...please wait" })
 
     var exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
@@ -321,10 +325,10 @@ class App extends Component {
     }).then(function (txResult) {
       console.log(txResult);
       that.updateTokenBalance()
-      that.setState({ loadingAddToken: false, managementTokenStatus: "Token succesfully added to Exchange" });
+      that.setState({ tokenState: "success", loadingAddToken: false, managementTokenStatus: "Token succesfully added to Exchange" });
     }).catch(function (e) {
       console.log(e);
-      that.setState({ loadingAddToken: false, managementTokenStatus: "There was an error adding Token to the Exchange. See logs" });
+      that.setState({ tokenState: "success", loadingAddToken: false, managementTokenStatus: "There was an error adding Token to the Exchange. See logs" });
     })
   }
 
@@ -334,18 +338,18 @@ class App extends Component {
     var amount = that.state.sendAmount;
     var receiver = that.state.sendAddres;
 
-    that.setState({ loadingSendToken: true, managementTokenStatus: "Initiating transaction...please wait" });
+    that.setState({ tokenState: "info", loadingSendToken: true, managementTokenStatus: "Initiating transaction...please wait" });
 
     var tokenInstance;
     TokenContract.deployed().then(function (instance) {
       tokenInstance = instance;
       return tokenInstance.transfer(receiver, amount, { from: that.state.account });
     }).then(function (txResults) {
-      that.setState({ loadingSendToken: false, managementTokenStatus: "Transfer complete!" });
+      that.setState({ tokenState: "success", loadingSendToken: false, managementTokenStatus: "Transfer complete!" });
       that.updateTokenBalance();
     }).catch(function (e) {
       console.log(e);
-      that.setStatus({ loadingSendToken: false, managementTokenStatus: "Error sending coin. See log." });
+      that.setState({ tokenState: "error", loadingSendToken: false, managementTokenStatus: "Error sending coin. See log." });
     })
   }
 
@@ -356,7 +360,7 @@ class App extends Component {
     var priceInWei = that.state.tokenPriceToBuy
     var amount = that.state.tokenAmountToBuy
 
-    that.setState({ tokenTradingStatus: "Attempting to buy token on Exchange" });
+    that.setState({ buyLoading: true, tradeState:"info", tokenTradingStatus: "Attempting to buy token on Exchange" });
 
     var exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
@@ -365,15 +369,15 @@ class App extends Component {
     }).then(function (txResult) {
       console.log(txResult);
       if (txResult.logs[0].event === "buyOfferCreated") {
-        that.setState({ tokenTradingStatus: "Buy order succesfully created" });
+        that.setState({ buyLoading: false, tradeState: "success", tokenTradingStatus: "Buy order succesfully created" });
       }
       if (txResult.logs[0].event === "buyOrderFulfilled") {
-        that.setState({ tokenTradingStatus: "Token(s) successfully purchased" });
+        that.setState({ buyLoading: false, tradeState: "success", tokenTradingStatus: "Token(s) successfully purchased" });
       }
       that.updateBalanceExchange();
     }).catch(function (e) {
       console.log(e);
-      that.setState({ tokenTradingStatus: "There was an error attempting to create a buy order" });
+      that.setState({ buyLoading: false, tradeState: "error", tokenTradingStatus: "There was an error attempting to create a buy order" });
     })
   }
 
@@ -385,7 +389,7 @@ class App extends Component {
     var priceInWei = that.state.tokenPriceToSell;
     var amount = that.state.tokenAmountToSell;
 
-    that.setState({ tokenTradingStatus: "Attempting to sell token on Exchange" });
+    that.setState({ sellLoading: true, tradeState:"info", tokenTradingStatus: "Attempting to sell token on Exchange" });
 
     var exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
@@ -394,15 +398,15 @@ class App extends Component {
     }).then(function (txResult) {
       console.log(txResult);
       if (txResult.logs[0].event === "sellOfferCreated") {
-        that.setState({ tokenTradingStatus: "Buy order succesfully created" });
+        that.setState({ sellLoading: false, tradeState: "success", tokenTradingStatus: "Buy order succesfully created" });
       }
       if (txResult.logs[0].event === "sellOrderFulfilled") {
-        that.setState({ tokenTradingStatus: "Token(s) successfully purchased" });
+        that.setState({ sellLoading: false, tradeState: "success", tokenTradingStatus: "Token(s) successfully purchased" });
       }
       that.updateBalanceExchange();
     }).catch(function (e) {
       console.log(e);
-      that.setState({ tokenTradingStatus: "There was an error attempting to create a sell order" });
+      that.setState({ sellLoading: false, tradeState:"error", tokenTradingStatus: "There was an error attempting to create a sell order" });
     })
   }
 
@@ -539,10 +543,12 @@ class App extends Component {
           handleSend={this.handleSend.bind(this)}
           loadingSend={this.state.loadingSendToken}
           loadingAdd={this.state.loadingAddToken}
-          tokenName={this.state.tokenName} />
+          tokenName={this.state.tokenName}
+          tokenState={this.state.tokenState} />
         <TokenTrading
           etherBalance={this.state.balanceEth}
           tokenBalanceInExchange={this.state.balanceTokenInExchange}
+          tokenState={this.state.tokenState}
           status={this.state.tokenTradingStatus}
           tokenNameToBuy={this.state.tokenNameToBuy}
           tokenAmountToBuy={this.state.tokenAmountToBuy}
@@ -554,6 +560,9 @@ class App extends Component {
           sellToken={this.sellToken.bind(this)}
           sellOrders={this.state.sellOrders}
           buyOrders={this.state.buyOrders}
+          tradeState={this.state.tradeState}
+          buyLoading={this.state.buyLoading}
+          sellLoading={this.state.sellLoading}
         />
         <Footer />
       </div>
