@@ -30,9 +30,9 @@ export default function ExchangeManagement(props) {
                                     placeholder='Amount to Deposit'
                                     name='amountDeposit'
                                     value={props.amountDeposit}
-                                    onChange={props.handleChange}
+                                    onChange={props.handleChangeEther}
                                 />
-                                <Form.Button color='green' labelPosition='left' icon='money bill alternate outline' content='Deposit' />
+                                <Form.Button disabled={props.amountDepositButton} color='green' labelPosition='left' icon='money bill alternate outline' content='Deposit' />
 
                             </Form>
                             <Form loading={props.ethLoading2} style={{ marginTop: '20px' }} onSubmit={props.handleSubmitWithdraw}>
@@ -41,9 +41,9 @@ export default function ExchangeManagement(props) {
                                     placeholder='Amount to Withdraw'
                                     name='amountWithdraw'
                                     value={props.amountWithdraw}
-                                    onChange={props.handleChange}
+                                    onChange={props.handleChangeEther}
                                 />
-                                <Form.Button color='green' labelPosition='left' icon='money bill alternate outline' content='Withdraw' />
+                                <Form.Button disabled={props.amountWithdrawButton} color='green' labelPosition='left' icon='money bill alternate outline' content='Withdraw' />
 
                             </Form>
 

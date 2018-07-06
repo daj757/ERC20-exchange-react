@@ -18,17 +18,22 @@ export default function TokenTrading(props) {
         <div>
             <Container>
                 <Header as="h1" textAlign="center">Token Trading</Header>
+            
                 {props.status}
-                <br />
-                <p style={{ textAlign: 'center' }}>{`You have ${props.etherBalance} Ether in the exchange.`}</p>
-                <br />
-                <p style={{ textAlign: 'center' }}>{`You have ${props.tokenBalanceInExchange} tokens in the Exchange`}</p>
-                <Divider />
+                <Segment color="blue">
+                    <Header as='h4' textAlign='center'>
+                        {`You have ${props.etherBalance} Ether in the exchange.`}
+                    </Header>
+                    <Header as='h4' textAlign='center'>
+                        {`You have ${props.tokenBalanceInExchange} tokens in the Exchange`}
+                    </Header>
+                </Segment>
+
                 <Grid>
                     <Grid.Row columns={2}>
                         <Grid.Column>
                             <Header as="h3" >Buy Token</Header>
-                            <Form loading={props.loadingAdd} onSubmit={props.handleTokenBuy}>
+                            <Form loading={props.loadingAdd} onSubmit={props.buyToken}>
                                 <Form.Input
                                     placeholder='Token Name'
                                     name='tokenNameToBuy'
@@ -44,10 +49,18 @@ export default function TokenTrading(props) {
                                 <Form.Button color='green' labelPosition='left' icon='add' content='Buy Token' />
 
                             </Form>
+                            <div style={{ marginTop: "20px" }}>
+                                <Header as='h2' attached='top'>
+                                    Buy Orders
+    </Header>
+                                <Segment attached>
+                                    {props.buyOrders}
+                                </Segment>
+                            </div>
                         </Grid.Column>
                         <Grid.Column>
                             <Header as="h4" >Sell Token</Header>
-                            <Form loading={props.loading} onSubmit={props.handleTokenAllowance}>
+                            <Form loading={props.loading} onSubmit={props.sellToken}>
                                 <Form.Input
                                     placeholder='Token Name'
                                     name='tokenNameToSell'
@@ -62,6 +75,14 @@ export default function TokenTrading(props) {
                                 />
                                 <Form.Button color='red' labelPosition='left' icon='minus' content='Sell Token' />
                             </Form>
+                            <div style={{ marginTop: "20px" }}>
+                                <Header as='h2' attached='top'>
+                                    Sell Orders
+    </Header>
+                                <Segment attached>
+                                    {props.sellOrders}
+                                </Segment>
+                            </div>
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>

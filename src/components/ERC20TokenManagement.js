@@ -18,13 +18,19 @@ export default function Erc20TokenManagement(props) {
         <div>
             <Container>
                 <Header as="h1" textAlign="center">ERC20 Token management</Header>
+
                 {props.status}
-                <br />
-                {`Exchange address is ${props.exchangeAddress}`}
-                <br />
-                {`Token address is ${props.address}`}
-                <Divider />
-                <Grid>
+                <Segment color="blue">
+                    <Header as='h4' textAlign='center'>
+                        {`Token address is ${props.address}`}
+                    </Header>
+                    <Header as='h4' textAlign='center'>
+                        {`Exchange address is ${props.exchangeAddress}`}
+                    </Header>
+                    <Header as="h4" textAlign="center" >You have {props.tokenAmount} Tokens in your account</Header>
+                </Segment>
+
+                <Grid verticalAlign="middle">
                     <Grid.Row columns={3}>
                         <Grid.Column>
                             <Header as="h3" >Add token to exchange</Header>
@@ -46,7 +52,6 @@ export default function Erc20TokenManagement(props) {
                             </Form>
                         </Grid.Column>
                         <Grid.Column>
-                            <Header as="h3" >You have {props.tokenAmount} Tokens in your account</Header>
                             <Header as="h4" >Allow tokens to be taken from your account and put into the exchange.</Header>
                             <Form loading={props.loading} onSubmit={props.handleTokenAllowance}>
                                 <Form.Input
@@ -64,7 +69,7 @@ export default function Erc20TokenManagement(props) {
                                     value={props.exchangeAddress}
                                     onChange={props.handleLetterChange}
                                 />
-                                <Form.Button color='blue' labelPosition='left' icon='add' content='Add Token' />
+                                <Form.Button color='blue' labelPosition='left' icon='key' content='Allow' />
 
                             </Form>
 
@@ -84,7 +89,7 @@ export default function Erc20TokenManagement(props) {
                                     value={props.sendAddress}
                                     onChange={props.handleLetterChange}
                                 />
-                                <Form.Button color='blue' labelPosition='left' icon='add' content='Send Token' />
+                                <Form.Button color='blue' labelPosition='left' icon='send' content='Send Token' />
 
                             </Form>
                         </Grid.Column>
