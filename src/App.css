@@ -34,6 +34,12 @@
 #tokenManagement p {
   color: white
 }
+#metaLink:hover {
+  color: greenyellow
+}
+#metaLink{
+  color: orange
+}
 body,
 .pure-g [class*=pure-u] {
   font-family: 'Open Sans', sans-serif;

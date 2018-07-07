@@ -51,32 +51,42 @@ class App extends Component {
       ethLoading2: false,
       amountDepositFieldError: false,
       amountWithdrawFieldError: false,
+      tokenAmountDepositFieldError: false,
+      tokenAmountWithdrawFieldError: false,
+      tokenAmountAllowanceFieldError: false,
+      tokenAmountToBuyFieldError: false,
+      tokenAmountToSellFieldError: false,
+      sendAmountFieldError: false,
       tokenDepositLoading: false,
       tokenWithdrawLoading: false,
       allowanceTokenLoading: false,
       loadingSendToken: false,
       loadingAddToken: false,
-      tokenAmountDeposit: 0,
+      tokenAmountDeposit: "",
       tokenName: "FIXED",
       tokenName2: "",
-      tokenAmountWithdraw: 0,
+      tokenAmountWithdraw: "",
       exchangeAddress: "",
       tokenAddress: "",
-      tokenAmountAllowance: 0,
-      sendAmount: 0,
+      tokenAmountAllowance: "",
+      sendAmount: "",
       sendAddress: "",
       tokenTradingStatus: "",
       tradeState: "",
       tokenNameToBuy: "",
-      tokenAmountToBuy: 0,
+      tokenAmountToBuy: "",
       tokenNameToSell: "",
-      tokenAmountToSell: 0,
+      tokenAmountToSell: "",
       tokenPriceToBuy: 0,
       tokenPriceToSell: 0,
       sellOrders: null,
       buyOrders: null,
       buyLoading: false,
-      sellLoading: false
+      sellLoading: false,
+      tokenPriceToBuy: "",
+      tokenPriceToSell: "",
+      tokenPriceToBuyFieldError: false,
+      tokenPriceToSellFieldError: false
 
     }
     this.instantiateContract = this.instantiateContract.bind(this);
@@ -449,10 +459,10 @@ class App extends Component {
 
   handleChangeEther = (e, { name, value }) => {
     if (isFinite(value) && value >= 0) {
-      this.setState({ [name]: value, [name + "FieldError"]: false, [name + "Button"]: false })
+      this.setState({ [name]: value, [name + "FieldError"]: false })
     }
     else {
-      this.setState({ [name + "FieldError"]: true, [name + "Button"]: true })
+      this.setState({ [name + "FieldError"]: true })
     }
   }
   handleChange = (e, { name, value }) => {
@@ -521,6 +531,8 @@ class App extends Component {
           ethLoading2={this.state.ethLoading2}
           amountWithdraw={this.state.amountWithdraw}
           amountWithdrawFieldError={this.state.amountWithdrawFieldError}
+          tokenAmountDepositFieldError={this.state.tokenAmountDepositFieldError}
+          tokenAmountWithdrawFieldError={this.state.tokenAmountWithdrawFieldError}
           handleSubmitWithdraw={this.handleSubmitWithdraw.bind(this)}
           balanceTokenInExchange={this.state.balanceTokenInExchange}
           handleTokenWithdraw={this.handleTokenWithdraw.bind(this)}
@@ -529,6 +541,10 @@ class App extends Component {
           amountDepositButton={this.state.amountDepositButton}
           amountWithdrawButton={this.state.amountWithdrawButton}
           handleChangeEther={this.handleChangeEther.bind(this)}
+          tokenDepositLoading={this.state.tokenDepositLoading}
+          tokenWithdrawLoading={this.state.tokenWithdrawLoading}
+          tokenAmountWithdraw={this.state.tokenAmountWithdraw}
+          tokenAmountDeposit={this.state.tokenAmountDeposit}
         />
         <Erc20Management handleChange={this.handleChange.bind(this)}
           handleLetterChange={this.handleChangeLetters.bind(this)}
@@ -544,7 +560,11 @@ class App extends Component {
           loadingSend={this.state.loadingSendToken}
           loadingAdd={this.state.loadingAddToken}
           tokenName={this.state.tokenName}
-          tokenState={this.state.tokenState} />
+          tokenState={this.state.tokenState}
+          tokenAmountAllowanceFieldError={this.state.tokenAmountAllowanceFieldError}
+          sendAmountFieldError={this.state.sendAmountFieldError}
+          handleChangeEther={this.handleChangeEther.bind(this)}
+          sendAmount={this.state.sendAmount} />
         <TokenTrading
           etherBalance={this.state.balanceEth}
           tokenBalanceInExchange={this.state.balanceTokenInExchange}
@@ -556,6 +576,9 @@ class App extends Component {
           tokenAmountToSell={this.state.tokenAmountToSell}
           handleChange={this.handleChange.bind(this)}
           handleLetterChange={this.handleChangeLetters.bind(this)}
+          handleChangeEther={this.handleChangeEther.bind(this)}
+          tokenAmountToSellFieldError={this.state.tokenAmountToSellFieldError}
+          tokenAmountToBuyFieldError={this.state.tokenAmountToBuyFieldError}
           buyToken={this.buyToken.bind(this)}
           sellToken={this.sellToken.bind(this)}
           sellOrders={this.state.sellOrders}
@@ -563,6 +586,10 @@ class App extends Component {
           tradeState={this.state.tradeState}
           buyLoading={this.state.buyLoading}
           sellLoading={this.state.sellLoading}
+          tokenPriceToBuy={this.state.tokenPriceToBuy}
+          tokenPriceToSell={this.state.tokenPriceToSell}
+          tokenPriceToSellFieldError={this.state.tokenPriceToSellFieldError}
+          tokenPriceToBuyFieldError={this.state.tokenPriceToBuyFieldError}
         />
         <Footer />
       </div>

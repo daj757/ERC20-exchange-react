@@ -38,78 +38,107 @@ function TradeMessage(props) {
 export default function TokenTrading(props) {
 
     return (
-        <div style={{ backgroundImage: `url(${tokens})`, backgroundSize: "cover" }} id="trading">
-            <Container>
-                <Header as="h1" textAlign="center">Token Trading</Header>
-                <Segment color="blue">
-                    <Header as='h4' textAlign='center'>
-                        {`You have ${props.etherBalance} Ether in the exchange.`}
-                    </Header>
-                    <Header as='h4' textAlign='center'>
-                        {`You have ${props.tokenBalanceInExchange} tokens in the Exchange`}
-                    </Header>
-                </Segment>
-                <TradeMessage status={props.status} tradeState={props.tradeState} />
+        <div>
+            <Responsive minWidth={768}>
+                <div style={{ backgroundImage: `url(${tokens})`, backgroundSize: "cover" }} id="trading">
+                    <Container>
+                        <Header as="h1" textAlign="center">Token Trading</Header>
+                        <Segment color="blue">
+                            <Header as='h4' textAlign='center'>
+                                {`You have ${props.etherBalance} Ether in the exchange.`}
+                            </Header>
+                            <Header as='h4' textAlign='center'>
+                                {`You have ${props.tokenBalanceInExchange} tokens in the Exchange`}
+                            </Header>
+                        </Segment>
+                        <TradeMessage status={props.status} tradeState={props.tradeState} />
 
-                <Grid>
-                    <Grid.Row columns={2} style={{ marginTop: "20px" }}>
-                        <Grid.Column>
-                            <Header as="h3" >Buy Token</Header>
-                            <Form loading={props.buyLoading} onSubmit={props.buyToken}>
-                                <Form.Input
-                                    placeholder='Token Name'
-                                    name='tokenNameToBuy'
-                                    value={props.tokenNameToBuy}
-                                    onChange={props.handleLetterChange}
-                                />
-                                <Form.Input
-                                    placeholder="Token Amount"
-                                    name="tokenAmountToBuy"
-                                    value={props.tokenAmountToBuy}
-                                    onChange={props.handleChange}
-                                />
-                                <Form.Button color='green' labelPosition='left' icon='add' content='Buy Token' />
+                        <Grid>
+                            <Grid.Row columns={2} style={{ marginTop: "20px" }}>
+                                <Grid.Column>
+                                    <Header as="h3" >Buy Token</Header>
+                                    <Form loading={props.buyLoading} onSubmit={props.buyToken}>
+                                        <Form.Input
+                                            required
+                                            placeholder='Token Name'
+                                            name='tokenNameToBuy'
+                                            value={props.tokenNameToBuy}
+                                            onChange={props.handleLetterChange}
+                                        />
+                                        <Form.Input
+                                            required
+                                            error={props.tokenPriceToBuyFieldError}
+                                            placeholder='Price (in wei)'
+                                            name='tokenPriceToBuy'
+                                            value={props.tokenPriceToBuy}
+                                            onChange={props.handleChangeEther}
+                                        />
+                                        <Form.Input
+                                            required
+                                            error={props.tokenAmountToBuyFieldError}
+                                            placeholder="Amount to buy"
+                                            name="tokenAmountToBuy"
+                                            value={props.tokenAmountToBuy}
+                                            onChange={props.handleChangeEther}
+                                        />
+                                        <Form.Button color='green' labelPosition='left' icon='add' content='Buy Token' />
 
-                            </Form>
-                            <div style={{ marginTop: "40px" }}>
-                                <Header as='h2' attached='top'>
-                                    Buy Orders
+                                    </Form>
+                                    <div style={{ marginTop: "40px" }}>
+                                        <Header as='h2' attached='top'>
+                                            Buy Orders
     </Header>
-                                <Segment attached>
-                                    {props.buyOrders}
-                                </Segment>
-                            </div>
-                        </Grid.Column>
-                        <Grid.Column>
-                            <Header as="h3" >Sell Token</Header>
-                            <Form loading={props.sellLoading} onSubmit={props.sellToken}>
-                                <Form.Input
-                                    placeholder='Token Name'
-                                    name='tokenNameToSell'
-                                    value={props.tokenNameToSell}
-                                    onChange={props.handleLetterChange}
-                                />
-                                <Form.Input
-                                    placeholder="Amount to sell."
-                                    name="tokenAmountToSell"
-                                    value={props.tokenAmountToSell}
-                                    onChange={props.handleChange}
-                                />
-                                <Form.Button color='red' labelPosition='left' icon='minus' content='Sell Token' />
-                            </Form>
-                            <div style={{ marginTop: "40px" }}>
-                                <Header as='h2' attached='top'>
-                                    Sell Orders
-    </Header>
-                                <Segment attached>
-                                    {props.sellOrders}
-                                </Segment>
-                            </div>
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
+                                        <Segment attached>
+                                            {props.buyOrders}
+                                        </Segment>
+                                    </div>
+                                </Grid.Column>
+                                <Grid.Column>
+                                    <Header as="h3" >Sell Token</Header>
+                                    <Form loading={props.sellLoading} onSubmit={props.sellToken}>
+                                        <Form.Input
+                                            required
+                                            placeholder='Token Name'
+                                            name='tokenNameToSell'
+                                            value={props.tokenNameToSell}
+                                            onChange={props.handleLetterChange}
+                                        />
+                                        <Form.Input
+                                            required
+                                            error={props.tokenPriceToSellFieldError}
+                                            placeholder='Price (in wei)'
+                                            name='tokenPriceToSell'
+                                            value={props.tokenPriceToSell}
+                                            onChange={props.handleChangeEther}
+                                        />
+                                        <Form.Input
 
-            </Container>
+                                            required
+                                            error={props.tokenAmountToSellFieldError}
+                                            placeholder="Amount to sell"
+                                            name="tokenAmountToSell"
+                                            value={props.tokenAmountToSell}
+                                            onChange={props.handleChangeEther}
+                                        />
+                                        <Form.Button color='red' labelPosition='left' icon='minus' content='Sell Token' />
+                                    </Form>
+                                    <div style={{ marginTop: "40px" }}>
+                                        <Header as='h2' attached='top'>
+                                            Sell Orders
+    </Header>
+                                        <Segment attached>
+                                            {props.sellOrders}
+                                        </Segment>
+                                    </div>
+                                </Grid.Column>
+                            </Grid.Row>
+                        </Grid>
+                    </Container>
+                </div>
+            </Responsive>
+            <Responsive {...Responsive.onlyMobile}>
+            </Responsive>
         </div>
+
     )
 }

@@ -20,10 +20,11 @@ export default class LandingPage extends Component {
             card = <Card
             style={{
                 position: 'absolute',
-                top: '25%',
-                right: '65%',
+                top: '20%',
+                left: '65%',
                 opacity: '0.7',
-                wordWrap: 'break-word'
+                wordWrap: 'break-word',
+                marginBottom: "20px"
             }}>
             <Image src={account} />
             <Card.Content>
@@ -42,9 +43,11 @@ export default class LandingPage extends Component {
             card =  <Card
             style={{
                 position: 'absolute',
-                top: '25%',
-                right: '65%',
+                top: '20%',
+                left: '65%',
                 opacity: '0.7',
+                wordWrap: 'break-word',
+                marginBottom: "20px"
             }}>
             <Image src={mask} />
             <Card.Content>
@@ -63,19 +66,20 @@ export default class LandingPage extends Component {
             }}
         >
             <Image src={exchange1} fluid  />
-            <Responsive minWidth={700}>
+            <Responsive minWidth={900}>
+            
             {card}
                 <Header
                     size="huge"
                     style={{
                         position: 'absolute',
                         top: '50%',
-                        left: '75%',
+                        right: '50%',
                         textTransform: 'uppercase',
                         transform: 'translate(-50%, -50%)',
                         color: 'white',
                         opacity: '0.7',
-                        textAlign: 'right',
+                        textAlign: 'center',
                         fontSize: '55px',
                         fontFamily: 'Russo One, sans-serif',
                     }}
@@ -85,24 +89,45 @@ export default class LandingPage extends Component {
             </Header>
 
             </Responsive>
-            <Responsive maxWidth={699}>
+            <Responsive maxWidth={899} minWidth={768}>
                 <Header
                     size="huge"
                     style={{
                         position: 'absolute',
-                        top: '50%',
-                        left: '75%',
+                        top: '80%',
+                        left: '50%',
                         textTransform: 'uppercase',
                         transform: 'translate(-50%, -50%)',
                         color: 'white',
                         opacity: '0.6',
                         textAlign: 'center',
-                        fontSize: '55px',
+                        fontSize: '45px',
                         fontFamily: 'Russo One, sans-serif',
                         marginTop: '10px',
                     }}
                 >
-                    Lockhart
+                   The Exchange
+    
+            </Header>
+            </Responsive>
+            <Responsive {...Responsive.onlyMobile}>
+                <Header
+                    size="small"
+                    style={{
+                        position: 'absolute',
+                        top: '85%',
+                        left: '50%',
+                        textTransform: 'uppercase',
+                        transform: 'translate(-50%, -50%)',
+                        color: 'white',
+                        opacity: '0.6',
+                        textAlign: 'center',
+                        fontSize: '15px',
+                        fontFamily: 'Russo One, sans-serif',
+                        
+                    }}
+                >
+                   Decentralized Token Exchange
     
             </Header>
             </Responsive>

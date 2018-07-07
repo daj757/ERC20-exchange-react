@@ -65,11 +65,11 @@ export default class Header extends Component {
                         inverted
                         fixed="top"
                     >
-                        <Menu.Menu position="right">
+                        <Menu.Menu position="left">
                             <Dropdown
                                 style={{
                                     color: 'white',
-                                    marginRight: '15px',
+                                    marginLeft: '15px',
                                     marginTop: '10px',
                                     fontSize: '20px',
 
@@ -78,37 +78,14 @@ export default class Header extends Component {
                             >
                                 <Dropdown.Menu >
                                     <Dropdown.Item
-                                        name="our-people"
-                                        active={activeItem === 'our-people'}
+                                        name="main"
+                                        active={activeItem === 'main'}
                                         onClick={this.handleItemClick}
-                                        href="#our-people"
+                                        href="#exchangeManagement"
                                     >
                                         About Exchange
                   </Dropdown.Item>
-                                    <Dropdown.Item
-                                        name="our-process"
-                                        active={activeItem === 'our-process'}
-                                        onClick={this.handleItemClick}
-                                        href="#process"
-                                    >
-                                        Metamask
-                  </Dropdown.Item>
-                                    <Dropdown.Item
-                                        name="how-it-workds"
-                                        active={activeItem === 'how-it-works'}
-                                        onClick={this.handleItemClick}
-                                        href="#how-it-works"
-                                    >
-                                        How it works
-                  </Dropdown.Item>
-                                    <Dropdown.Item
-                                        name="Employment"
-                                        active={activeItem === 'Employment'}
-                                        onClick={this.handleItemClick}
-                                        href="#employment"
-                                    >
-                                        Employment
-                  </Dropdown.Item>
+
 
                                 </Dropdown.Menu>
                             </Dropdown>
