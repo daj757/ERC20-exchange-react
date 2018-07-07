@@ -24,7 +24,7 @@ export default class Header extends Component {
                             active={activeItem === 'tokenExchange'}
                             onClick={this.handleItemClick}
                             link={true}
-                            href="#token-exchange"
+                            href="#main"
                             header
                         >
                             Decentralized Token Exchange
@@ -35,7 +35,7 @@ export default class Header extends Component {
                                 name="accountManagement"
                                 active={activeItem === 'accountManagement'}
                                 onClick={this.handleItemClick}
-                                href="#account-management"
+                                href="#exchangeManagement"
                             >
                                 Account Management
             </Menu.Item>
@@ -44,7 +44,7 @@ export default class Header extends Component {
                                 name="tokenManagement"
                                 active={activeItem === 'tokenManagement'}
                                 onClick={this.handleItemClick}
-                                href="#token-management"
+                                href="#tokenManagement"
                             >
                                 Token Management
             </Menu.Item>
@@ -52,7 +52,7 @@ export default class Header extends Component {
                                 name="tokenTrading"
                                 active={activeItem === 'tokenTrading'}
                                 onClick={this.handleItemClick}
-                                href="#token-trading"
+                                href="#trading"
                             >
                                 Token Trading
             </Menu.Item>

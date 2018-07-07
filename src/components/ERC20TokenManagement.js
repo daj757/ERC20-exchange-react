@@ -13,7 +13,7 @@ import {
     Form,
     Message
 } from 'semantic-ui-react'
-
+import market from "../../public/static/images/market.jpg"
 function TokenMessage(props) {
     switch (props.tokenState) {
         case "info":
@@ -37,7 +37,7 @@ function TokenMessage(props) {
 export default function Erc20TokenManagement(props) {
 
     return (
-        <div>
+        <div style={{ backgroundImage: `url(${market})`, backgroundSize: "cover" }} id="tokenManagement">
             <Container>
                 <Header as="h1" textAlign="center">ERC20 Token management</Header>
                 <Segment color="blue">
@@ -50,7 +50,7 @@ export default function Erc20TokenManagement(props) {
                     <Header as="h4" textAlign="center" >You have {props.tokenAmount} Tokens in your account</Header>
                 </Segment>
                 <TokenMessage status={props.status} tokenState={props.tokenState} />
-                <Grid verticalAlign="middle">
+                <Grid style={{ padding: "20px" }} verticalAlign="middle">
                     <Grid.Row columns={3}>
                         <Grid.Column>
                             <Header as="h3" >Add token to exchange</Header>
@@ -72,7 +72,7 @@ export default function Erc20TokenManagement(props) {
                             </Form>
                         </Grid.Column>
                         <Grid.Column>
-                            <Header as="h4" >Allow tokens to be taken from your account and put into the exchange.</Header>
+                            <Header as="h3" >Allow tokens to be taken from your account and put into the exchange.</Header>
                             <Form loading={props.loading} onSubmit={props.handleTokenAllowance}>
                                 <Form.Input
 

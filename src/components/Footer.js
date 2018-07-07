@@ -19,7 +19,7 @@ const Footer = () => (
                             textAlign: 'center',
                             fontFamily: 'Russo One, sans-serif',
                         }}
-                        content="2018 Decentralized Token Exchange"
+                        content="2018 Decentralized Token Exchange Daniel Jimenez"
                     />
                 </List>
             </div>

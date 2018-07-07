@@ -11,6 +11,7 @@ import {
     Form,
     Message
 } from 'semantic-ui-react'
+import money from "../../public/static/images/money.jpg"
 function MainMessage(props) {
     switch (props.managementState) {
         case "info":
@@ -34,7 +35,7 @@ function MainMessage(props) {
 export default function ExchangeManagement(props) {
 
     return (
-        <div>
+        <div style={{ backgroundImage: `url(${money})`, backgroundSize: "cover" }} id="exchangeManagement">
             <Container>
                 <Header as="h1" textAlign="center">Exchange Account Management</Header>
                 <Divider />
@@ -53,7 +54,7 @@ export default function ExchangeManagement(props) {
                                     value={props.amountDeposit}
                                     onChange={props.handleChangeEther}
                                 />
-                                <Form.Button disabled={props.amountDepositButton} color='green' labelPosition='left' icon='money bill alternate outline' content='Deposit' />
+                                <Form.Button color='green' labelPosition='left' icon='money bill alternate outline' content='Deposit' />
 
                             </Form>
                             <Form loading={props.ethLoading2} style={{ marginTop: '20px' }} onSubmit={props.handleSubmitWithdraw}>
@@ -64,7 +65,7 @@ export default function ExchangeManagement(props) {
                                     value={props.amountWithdraw}
                                     onChange={props.handleChangeEther}
                                 />
-                                <Form.Button disabled={props.amountWithdrawButton} color='green' labelPosition='left' icon='money bill alternate outline' content='Withdraw' />
+                                <Form.Button color='green' labelPosition='left' icon='money bill alternate outline' content='Withdraw' />
 
                             </Form>
 

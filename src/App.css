@@ -1,8 +1,43 @@
 /* PAGE */
+#exchangeManagement h1  {
+  color: white 
+}
+#exchangeManagement h2 {
+  color: white
+}
+#exchangeManagement h3 {
+  color: white 
+}
+#exchangeManagement h4 {
+  color: white 
+}
+#exchangeManagement p {
+  color: white 
+}
+#tokenManagement h1 {
+  color: white
+}
+#tokenManagement h2 {
+  color: white
+}
+#tokenManagement h3 {
+  color: white
+}
 
+#trading h1 {
+  color: white
+}
+#trading h3 {
+  color: white
+}
+
+#tokenManagement p {
+  color: white
+}
 body,
 .pure-g [class*=pure-u] {
   font-family: 'Open Sans', sans-serif;
+
 }
 
 h1, h2, h3 {

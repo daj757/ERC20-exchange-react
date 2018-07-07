@@ -1,5 +1,5 @@
-import exchange from "../../public/static/images/exchange.jpg"
-import user from "../../public/static/images/user.jpg"
+import account from "../../public/static/images/account.jpg"
+import  exchange1 from "../../public/static/images/exchange1.jpg"
 import mask from "../../public/static/images/metamask.png"
 import React, { Component } from 'react'
 import {
@@ -25,7 +25,7 @@ export default class LandingPage extends Component {
                 opacity: '0.7',
                 wordWrap: 'break-word'
             }}>
-            <Image src={user} />
+            <Image src={account} />
             <Card.Content>
                 <Card.Header>Welcome: {this.props.address}</Card.Header>
                 <Card.Meta>
@@ -57,12 +57,12 @@ export default class LandingPage extends Component {
         }
         return(
         <div
-            id="about-us"
+            id="main"
             style={{
                 position: 'relative',
             }}
         >
-            <Image src={exchange} fluid style={{ marginBottom: '4px' }} />
+            <Image src={exchange1} fluid  />
             <Responsive minWidth={700}>
             {card}
                 <Header

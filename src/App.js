@@ -116,7 +116,7 @@ class App extends Component {
       that.setState({ balanceToken: balance.valueOf() })
     }).catch(function (e) {
       console.log(e);
-      that.setState({ tokenState:"error", managementTokenStatus: "Error getting balance. See log." })
+      that.setState({ tokenState: "error", managementTokenStatus: "Error getting balance. See log." })
     })
   }
 
@@ -316,7 +316,7 @@ class App extends Component {
     let nameOfToken = tokenName;
     let addressOfToken = address;
 
-    that.setState({ tokenState:"info", loadingAddToken: true, managementTokenStatus: "Initiating addition of Token to Exchange...please wait" })
+    that.setState({ tokenState: "info", loadingAddToken: true, managementTokenStatus: "Initiating addition of Token to Exchange...please wait" })
 
     var exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
@@ -360,7 +360,7 @@ class App extends Component {
     var priceInWei = that.state.tokenPriceToBuy
     var amount = that.state.tokenAmountToBuy
 
-    that.setState({ buyLoading: true, tradeState:"info", tokenTradingStatus: "Attempting to buy token on Exchange" });
+    that.setState({ buyLoading: true, tradeState: "info", tokenTradingStatus: "Attempting to buy token on Exchange" });
 
     var exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
@@ -389,7 +389,7 @@ class App extends Component {
     var priceInWei = that.state.tokenPriceToSell;
     var amount = that.state.tokenAmountToSell;
 
-    that.setState({ sellLoading: true, tradeState:"info", tokenTradingStatus: "Attempting to sell token on Exchange" });
+    that.setState({ sellLoading: true, tradeState: "info", tokenTradingStatus: "Attempting to sell token on Exchange" });
 
     var exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
@@ -406,7 +406,7 @@ class App extends Component {
       that.updateBalanceExchange();
     }).catch(function (e) {
       console.log(e);
-      that.setState({ sellLoading: false, tradeState:"error", tokenTradingStatus: "There was an error attempting to create a sell order" });
+      that.setState({ sellLoading: false, tradeState: "error", tokenTradingStatus: "There was an error attempting to create a sell order" });
     })
   }
 
