@@ -1,14 +1,9 @@
-import React, { Component } from 'react'
+import React from 'react'
 import {
-    Image,
     Segment,
     Header,
-    Input,
     Responsive,
     Container,
-    Card,
-    Icon,
-    Divider,
     Grid,
     Form,
     Message

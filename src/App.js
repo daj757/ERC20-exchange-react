@@ -12,13 +12,6 @@ import './css/oswald.css'
 import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
-import {
-  Header,
-  Grid,
-  Form,
-  Container,
-  Divider
-} from 'semantic-ui-react'
 
 import { default as contract } from 'truffle-contract';
 var ExchangeContract = contract(exchange_artifact);
@@ -77,14 +70,15 @@ class App extends Component {
       tokenAmountToBuy: "",
       tokenNameToSell: "",
       tokenAmountToSell: "",
-      sellOrders: null,
-      buyOrders: null,
+      sellOrders: [],
+      buyOrders: [],
       buyLoading: false,
       sellLoading: false,
       tokenPriceToBuy: "",
       tokenPriceToSell: "",
       tokenPriceToBuyFieldError: false,
-      tokenPriceToSellFieldError: false
+      tokenPriceToSellFieldError: false,
+      tokenAllowanceAmount: 0
 
     }
     this.instantiateContract = this.instantiateContract.bind(this);
@@ -207,13 +201,13 @@ class App extends Component {
       this.updateTokenBalance()
       this.printImportantInformation()
       this.updateOrderBook()
+
     })
   }
 
   // deposit ether into Exchange on index.html
   depositEtherIntoExchange = () => {
     // var amount = parseInt(document.getElementById("inputAmountDepositEther").value);
-
     this.setState({ managementState: "info", managementStatus: "Initializing deposit of Ether into your account on the Exchange... Please wait" });
     this.setState({ ethLoading: true })
     var exchangeInstance;
@@ -255,6 +249,7 @@ class App extends Component {
 
   depositTokenIntoExchange() {
     var that = this;
+
     var symbolName = this.state.tokenName;
     var amount = this.state.tokenAmountDeposit;
 
@@ -266,7 +261,7 @@ class App extends Component {
     }).then(function (txResult) {
       console.log(txResult);
       that.updateBalanceExchange();
-      that.setState({ managementState: "success", managementStatus: "Token(s) successfully deposited into your account on the Exchange", tokenDepositLoading: false });
+      that.setState({ tokenAllowanceAmount: that.state.tokenAllowanceAmount - Number(amount), managementState: "success", managementStatus: `Token(s) successfully deposited into your account on the Exchange. Tx: ${txResult.tx}`, tokenDepositLoading: false });
     }).catch(function (e) {
       console.log(e);
       that.setState({ managementState: "error", managementStatus: "There was an error depositing Token into your account on the Exchange", tokenDepositLoading: false });
@@ -307,12 +302,12 @@ class App extends Component {
     that.setState({ tokenState: "info", allowanceTokenLoading: true, managementTokenStatus: "Initiating allowance of token...please wait" });
     let tokenInstance;
     TokenContract.deployed().then(function (instance) {
-      console.log(instance, receiver, amount, that.state.account, that.state.allowanceTokenLoading)
+
       tokenInstance = instance;
       return tokenInstance.approve(receiver, amount, { from: that.state.account });
     }).then(function (txResults) {
-      console.log(txResults)
-      that.setState({ tokenState: "success", allowanceTokenLoading: false, managementTokenStatus: "Token allowance accepted" });
+      that.setState({ tokenAllowanceAmount: that.state.tokenAllowanceAmount += Number(amount), tokenState: "success", allowanceTokenLoading: false, managementTokenStatus: `Token allowance accepted. You have allowed ${amount} to be deposited into the exchange. Tx: ${txResults.tx}` });
+
     }).catch(function (e) {
       console.log(e);
       that.setState({ tokenState: "error", allowanceTokenLoading: false, managementTokenStatus: "Token allowance rejected" });
@@ -368,7 +363,7 @@ class App extends Component {
     var priceInWei = that.state.tokenPriceToBuy
     var amount = that.state.tokenAmountToBuy
 
-    that.setState({ buyLoading: true, tradeState: "info", tokenTradingStatus: "Attempting to buy token on Exchange" });
+    that.setState({ buyLoading: true, tradeState: "info", tokenTradingStatus: "Attempting to buy token(s) on Exchange" });
 
     var exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
@@ -376,13 +371,16 @@ class App extends Component {
       return exchangeInstance.buyToken(symbolName, priceInWei, amount, { from: that.state.account });
     }).then(function (txResult) {
       console.log(txResult);
-      if (txResult.logs[0].event === "buyOfferCreated") {
-        that.setState({ buyLoading: false, tradeState: "success", tokenTradingStatus: "Buy order succesfully created" });
+      let tx = txResult.txtx
+      if (txResult.logs[0].event === "LimitBuyOrderCreated") {
+        that.setState({ buyLoading: false, tradeState: "success", tokenTradingStatus: `Buy order succesfully created. Tx: ${tx}` });
       }
-      if (txResult.logs[0].event === "buyOrderFulfilled") {
-        that.setState({ buyLoading: false, tradeState: "success", tokenTradingStatus: "Token(s) successfully purchased" });
+      if (txResult.logs[0].event === "SellOrderFulfilled") {
+
+        that.setState({ buyLoading: false, tradeState: "success", tokenTradingStatus: `Token(s) successfully purchased. Tx: ${tx}` });
       }
       that.updateBalanceExchange();
+      that.updateOrderBook()
     }).catch(function (e) {
       console.log(e);
       that.setState({ buyLoading: false, tradeState: "error", tokenTradingStatus: "There was an error attempting to create a buy order" });
@@ -404,14 +402,15 @@ class App extends Component {
       exchangeInstance = instance;
       return exchangeInstance.sellToken(symbolName, priceInWei, amount, { from: that.state.account });
     }).then(function (txResult) {
-      console.log(txResult);
-      if (txResult.logs[0].event == "sellOfferCreated") {
-        that.setState({ sellLoading: false, tradeState: "success", tokenTradingStatus: "Buy order succesfully created" });
+      let tx = txResult.tx
+      if (txResult.logs[0].event === "LimitSellOrderCreated") {
+        that.setState({ sellLoading: false, tradeState: "success", tokenTradingStatus: `Buy order created. Tx: ${tx}` });
       }
-      if (txResult.logs[0].event == "sellOrderFulfilled") {
-        that.setState({ sellLoading: false, tradeState: "success", tokenTradingStatus: "Token(s) successfully purchased" });
+      if (txResult.logs[0].event === "SellOrderFulfilled") {
+        that.setState({ sellLoading: false, tradeState: "success", tokenTradingStatus: `Token(s) successfully purchased. Tx: ${tx} ` });
       }
       that.updateBalanceExchange();
+      that.updateOrderBook()
     }).catch(function (e) {
       console.log(e);
       that.setState({ sellLoading: false, tradeState: "error", tokenTradingStatus: "There was an error attempting to create a sell order" });
@@ -420,7 +419,8 @@ class App extends Component {
 
   // display outstanding buy and sell orders on trading.html
   updateOrderBook() {
-    var that = this
+    let that = this
+    that.setState({ buyOrders: [], sellOrders: [] })
     let exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
       exchangeInstance = instance;
@@ -429,31 +429,32 @@ class App extends Component {
       if (orderbook[0].length === 0) {
         that.setState({ buyOrders: 'No buy orders' })
       }
-      for (var i = 0; i < orderbook[0].length; i++) {
-        that.setState({ buyOrders: `buy ${orderbook[1][i]}@${orderbook[0][i]}` })
+      for (let i = 0; i < orderbook[0].length; i++) {
+        that.setState({ buyOrders: that.state.buyOrders.concat(`Buy ${orderbook[1][i]} ${that.state.tokenName} @ ${orderbook[0][i]} wei`) })
       }
       return exchangeInstance.getSellOrderBook(that.state.tokenName, { from: that.state.account });
     }).then(function (orderbook) {
       if (orderbook[0].length === 0) {
         that.setState({ sellOrders: 'No sell orders' })
       }
-      for (var i = 0; i < orderbook[0].length; i++) {
-        that.setState({ buyOrders: `Sell ${orderbook[1][i]}@${orderbook[0][i]}` })
+      for (let i = 0; i < orderbook[0].length; i++) {
+        that.setState({ sellOrders: that.state.sellOrders.concat(`Sell ${orderbook[1][i]} ${that.state.tokenName} @ ${orderbook[0][i]} wei`) })
       }
     })
   }
 
   printImportantInformation() {
-    var that = this
+    let that = this
     ExchangeContract.deployed().then(function (instance) {
       that.setState({ exchangeAddress: instance.address });
     })
     TokenContract.deployed().then(function (instance) {
-      console.log(instance.address)
       that.setState({ tokenAddress: instance.address });
     })
 
   }
+
+  //Event handlers
 
   handleChangeEther = (e, { name, value }) => {
     if (isFinite(value) && value >= 0) {
@@ -478,7 +479,7 @@ class App extends Component {
   }
 
   handleTokenAllowance = () => {
-    const { allowanceTokenLoading } = this.state
+   
     this.allowanceToken()
 
   }
@@ -487,27 +488,25 @@ class App extends Component {
     this.setState({ [name]: value })
   }
   handleSubmitDeposit = () => {
-    const { amountDeposit } = this.state;
 
     this.depositEtherIntoExchange();
 
   }
   handleSubmitWithdraw = () => {
-    const { amountWithdraw } = this.state
+    
     this.withdrawEthFromExchange();
 
   }
   handleTokenDeposit = () => {
-    const { tokenName, tokenAmountDeposit } = this.state
+   
     this.depositTokenIntoExchange();
   }
   handleTokenWithdraw = () => {
-    const { tokenName, tokenAmountWithdraw } = this.state
+    
     this.withdrawTokenFromExchange();
   }
 
   render() {
-    const { amountDeposit, amountWithdraw, tokenAmountDeposit, tokenName, tokenAmountWithdraw, tokenName2 } = this.state
     return (
       <div className="App">
         <NavBar />
@@ -531,7 +530,6 @@ class App extends Component {
           amountWithdrawFieldError={this.state.amountWithdrawFieldError}
           tokenAmountDepositFieldError={this.state.tokenAmountDepositFieldError}
           tokenAmountWithdrawFieldError={this.state.tokenAmountWithdrawFieldError}
-          handleSubmitWithdraw={this.handleSubmitWithdraw.bind(this)}
           balanceTokenInExchange={this.state.balanceTokenInExchange}
           handleTokenWithdraw={this.handleTokenWithdraw.bind(this)}
           handleChangeLetters={this.handleChangeLetters.bind(this)}
@@ -543,6 +541,7 @@ class App extends Component {
           tokenWithdrawLoading={this.state.tokenWithdrawLoading}
           tokenAmountWithdraw={this.state.tokenAmountWithdraw}
           tokenAmountDeposit={this.state.tokenAmountDeposit}
+          tokenAllowanceAmount={this.state.tokenAllowanceAmount}
         />
         <Erc20Management handleChange={this.handleChange.bind(this)}
           handleLetterChange={this.handleChangeLetters.bind(this)}

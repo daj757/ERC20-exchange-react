@@ -6,9 +6,7 @@ import {
     Image,
     Header,
     Responsive,
-    Container,
-    Card,
-    Icon
+    Card
 } from 'semantic-ui-react'
 
 export default class LandingPage extends Component {

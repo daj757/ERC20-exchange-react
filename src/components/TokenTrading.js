@@ -1,14 +1,9 @@
 import React from 'react'
 import {
-    Image,
     Segment,
     Header,
-    Input,
     Responsive,
     Container,
-    Card,
-    Icon,
-    Divider,
     Grid,
     Form,
     Message
@@ -35,6 +30,24 @@ function TradeMessage(props) {
             return null
     }
 }
+function TradeOrders(props) {
+    if (props.tradeOrders.length > 0) {
+        const tradeOrders = props.tradeOrders
+        const tradeList = tradeOrders.map((order, i) =>
+            <li key={i}>{order}</li>
+        );
+        return (
+            <ul>{tradeList}</ul>
+        )
+    }
+    else {
+        return <div>No {props.name} orders</div>
+    }
+}
+
+
+
+
 export default function TokenTrading(props) {
 
     return (
@@ -43,14 +56,24 @@ export default function TokenTrading(props) {
                 <div style={{ backgroundImage: `url(${tokens})`, backgroundSize: "cover" }} id="trading">
                     <Container>
                         <Header as="h1" textAlign="center">Token Trading</Header>
-                        <Segment color="blue">
-                            <Header as='h4' textAlign='center'>
-                                {`You have ${props.etherBalance} Ether in the exchange.`}
-                            </Header>
-                            <Header as='h4' textAlign='center'>
-                                {`You have ${props.tokenBalanceInExchange} tokens in the Exchange`}
-                            </Header>
-                        </Segment>
+                        <Grid centered columns={4}>
+                            <Grid.Column>
+                                <Segment circular style={{ width: 175, height: 175 }}>
+                                    <Header as='h2'>
+                                        Ether
+        <Header.Subheader>{parseFloat(props.etherBalance).toFixed(3)}</Header.Subheader>
+                                    </Header>
+                                </Segment>
+                            </Grid.Column>
+                            <Grid.Column>
+                                <Segment circular inverted style={{ width: 175, height: 175 }}>
+                                    <Header as='h2' inverted>
+                                        Tokens
+        <Header.Subheader>{props.tokenBalanceInExchange.toFixed(3)}</Header.Subheader>
+                                    </Header>
+                                </Segment>
+                            </Grid.Column>
+                        </Grid>
                         <TradeMessage status={props.status} tradeState={props.tradeState} />
 
                         <Grid>
@@ -89,7 +112,7 @@ export default function TokenTrading(props) {
                                             Buy Orders
     </Header>
                                         <Segment attached>
-                                            {props.buyOrders}
+                                            <TradeOrders name="Buy" tradeOrders={props.buyOrders} />
                                         </Segment>
                                     </div>
                                 </Grid.Column>
@@ -127,7 +150,7 @@ export default function TokenTrading(props) {
                                             Sell Orders
     </Header>
                                         <Segment attached>
-                                            {props.sellOrders}
+                                            <TradeOrders name="Sell" tradeOrders={props.sellOrders} />
                                         </Segment>
                                     </div>
                                 </Grid.Column>

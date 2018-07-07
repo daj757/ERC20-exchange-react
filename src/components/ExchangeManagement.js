@@ -1,12 +1,10 @@
-import React, { Component } from 'react'
+import React from 'react'
 import {
     Image,
     Segment,
     Header,
-    Input,
     Responsive,
     Container,
-    Divider,
     Grid,
     Form,
     Message
@@ -40,15 +38,19 @@ export default function ExchangeManagement(props) {
             <Container>
                 <Responsive minWidth={768}>
                     <Header as="h1" textAlign="center">Exchange Account Management</Header>
-                    <Divider />
+
+                    <Segment.Group horizontal>
+                        <Segment >Ether in exchange: {props.balanceEth}</Segment>
+                        <Segment >Tokens in Exchange: {props.balanceTokenInExchange}</Segment>
+                        <Segment >You have allowed {props.tokenAllowanceAmount} Tokens to be deposited into exchange.</Segment>
+                    </Segment.Group>
+
                     <MainMessage managementState={props.managementState} managementStatus={props.managementStatus} />
-                    <Grid>
+                    <Grid verticalAlign="top" padded relaxed="very" >
                         <Grid.Row columns={2}>
                             <Grid.Column>
                                 <Header as="h3" >Deposit and withdraw Ether from exchange.</Header>
-                                <Header as="h4" >You have {props.balanceEth} Ether in the exchange.</Header>
-
-                                <Form loading={props.ethLoading} onSubmit={props.handleSubmitDeposit}>
+                                <Form style={{ paddingTop: "10px", paddingBottom: "20px" }} loading={props.ethLoading} onSubmit={props.handleSubmitDeposit}>
                                     <Form.Input
                                         error={props.amountDepositFieldError}
                                         placeholder='Amount to Deposit'
@@ -76,8 +78,7 @@ export default function ExchangeManagement(props) {
 
                             </Grid.Column>
                             <Grid.Column>
-                                <Header as="h3" >Deposit any custom ERC20 token below. First head to ERC20 token management to add a token.</Header>
-                                <Header as="h4" >You have {props.balanceTokenInExchange} Tokens in the exchange.</Header>
+                                <Header as="h3" >Deposit any custom ERC20 token below. First head to ERC20 token management to add/allow token(s) into exchange.</Header>
                                 <Form loading={props.tokenDepositLoading} style={{ marginTop: '20px' }} onSubmit={props.handleTokenDeposit}>
                                     <Form.Input
                                         required
