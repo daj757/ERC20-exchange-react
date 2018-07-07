@@ -77,8 +77,6 @@ class App extends Component {
       tokenAmountToBuy: "",
       tokenNameToSell: "",
       tokenAmountToSell: "",
-      tokenPriceToBuy: 0,
-      tokenPriceToSell: 0,
       sellOrders: null,
       buyOrders: null,
       buyLoading: false,
@@ -407,10 +405,10 @@ class App extends Component {
       return exchangeInstance.sellToken(symbolName, priceInWei, amount, { from: that.state.account });
     }).then(function (txResult) {
       console.log(txResult);
-      if (txResult.logs[0].event === "sellOfferCreated") {
+      if (txResult.logs[0].event == "sellOfferCreated") {
         that.setState({ sellLoading: false, tradeState: "success", tokenTradingStatus: "Buy order succesfully created" });
       }
-      if (txResult.logs[0].event === "sellOrderFulfilled") {
+      if (txResult.logs[0].event == "sellOrderFulfilled") {
         that.setState({ sellLoading: false, tradeState: "success", tokenTradingStatus: "Token(s) successfully purchased" });
       }
       that.updateBalanceExchange();
