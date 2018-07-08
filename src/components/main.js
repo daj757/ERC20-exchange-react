@@ -47,7 +47,7 @@ export default class LandingPage extends Component {
                 <Card.Header>Welcome: {this.props.address}</Card.Header>
                 <Card.Meta>
                     <p>You are currently on the {this.props.network} </p>
-                    <p>You have {this.props.etherBalance} Ether. </p>
+                    <p>You have {this.props.etherBalance} Ether in your account. </p>
                     <p>You have {this.props.exchangeEther} Ether in the exchange. </p>
                     <p> You have {this.props.tokenBalance} tokens in your account.</p>
                     <p> You have {this.props.tokenBalanceInExchange} tokens in the exchange.</p>

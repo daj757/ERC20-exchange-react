@@ -36,8 +36,8 @@ export default function Erc20TokenManagement(props) {
             <Responsive minWidth={768}>
                 <div style={{ backgroundImage: `url(${market})`, backgroundSize: "cover" }} id="tokenManagement">
                     <Container>
-                        <Header as="h1" textAlign="center">ERC20 Token management</Header>
-                        <Segment color="blue">
+                        <Header style={{ paddingBottom: "25px" }} as="h1" textAlign="center">ERC20 Token management</Header>
+                        <Segment style={{ marginBottom: "25px" }} color="blue">
                             <Header as='h4' textAlign='center'>
                                 For demonstration purposes the add token fields have been added for you. This will contact a smart contract for an ERC20 token I have created
                                 called "FIXED". The contract will give you 100,000 FIXED tokens into your account.

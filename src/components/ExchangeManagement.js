@@ -37,12 +37,11 @@ export default function ExchangeManagement(props) {
         <div style={{ backgroundImage: `url(${money})`, backgroundSize: "cover" }} id="exchangeManagement">
             <Container>
                 <Responsive minWidth={768}>
-                    <Header as="h1" textAlign="center">Exchange Account Management</Header>
-
-                    <Segment.Group horizontal>
+                    <Header as="h1" textAlign="center" style={{ paddingBottom: "25px" }}>Exchange Account Management</Header>
+                    <Segment.Group style={{ marginBottom: "25px" }} horizontal>
                         <Segment >Ether in exchange: {props.balanceEth}</Segment>
                         <Segment >Tokens in Exchange: {props.balanceTokenInExchange}</Segment>
-                        <Segment >You have allowed {props.tokenAllowanceAmount} Tokens to be deposited into exchange.</Segment>
+                        <Segment >You have allowed {props.tokenAllowanceAmount} tokens to be deposited into exchange.</Segment>
                     </Segment.Group>
 
                     <MainMessage managementState={props.managementState} managementStatus={props.managementStatus} />
@@ -79,7 +78,7 @@ export default function ExchangeManagement(props) {
                             </Grid.Column>
                             <Grid.Column>
                                 <Header as="h3" >Deposit any custom ERC20 token below. First head to ERC20 token management to add/allow token(s) into exchange.</Header>
-                                <Form loading={props.tokenDepositLoading} style={{ marginTop: '20px' }} onSubmit={props.handleTokenDeposit}>
+                                <Form loading={props.tokenDepositLoading} style={{ marginTop: '20px', paddingBottom: "20px" }} onSubmit={props.handleTokenDeposit}>
                                     <Form.Input
                                         required
                                         placeholder='Token Name'
@@ -127,9 +126,9 @@ export default function ExchangeManagement(props) {
 
 
                         <p style={{ fontSize: "20px" }}>
-                            This site is built to allow you to exchange ERC20 standard tokens on both the rinkeby and the main net on the Ethereum
-                            network. To access and interact with the site please use a desktop browser with metamask installed.
-                            Find out more about metamask and interacting with the ethereum network by visiting the site below.
+                            This site is built to allow you to exchange ERC20 standard tokens on both the Rinkeby and the Main net on the Ethereum
+                            network. To access and interact with the site please use a desktop browser with Metamask installed.
+                            Find out more about Metamask and interacting with the Ethereum network by visiting the site below.
       </p>
                         <Header as="h3" textAlign="center" color="orange"><a id="metaLink" target="_blank" href="https://metamask.io/">Metamask</a></Header>
 

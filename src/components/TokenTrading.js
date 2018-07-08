@@ -55,7 +55,7 @@ export default function TokenTrading(props) {
             <Responsive minWidth={768}>
                 <div style={{ backgroundImage: `url(${tokens})`, backgroundSize: "cover" }} id="trading">
                     <Container>
-                        <Header as="h1" textAlign="center">Token Trading</Header>
+                        <Header style={{ paddingBottom: "25px" }} as="h1" textAlign="center">Token Trading</Header>
                         <Grid centered columns={4}>
                             <Grid.Column>
                                 <Segment circular style={{ width: 175, height: 175 }}>
