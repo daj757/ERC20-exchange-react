@@ -216,7 +216,7 @@ class App extends Component {
       exchangeInstance = instance;
       return exchangeInstance.depositEther({ from: that.state.account, to: exchangeInstance.address, value: that.state.web3.toWei(that.state.amountDeposit, "ether") });
     }).then(function (txResult) {
-      console.log(txResult);
+      
       that.updateBalanceExchange();
       that.setState({ managementState: "success", managementStatus: `Ether successfully deposited into your account on the Exchange. Tx id ${txResult.tx}` });
       that.setState({ amountDeposit: 0, ethLoading: false })
@@ -236,7 +236,7 @@ class App extends Component {
       exchangeInstance = instance;
       return exchangeInstance.withdrawEther(that.state.web3.toWei(that.state.amountWithdraw, "ether"), { from: that.state.account });
     }).then(function (txResult) {
-      console.log(txResult);
+     
       that.updateBalanceExchange();
       that.setState({ managementState: "success", managementStatus: `Ether successfully withdrawn from your account on the Exchange. TX id ${txResult.tx}` });
       that.setState({ amountWithdraw: 0, ethLoading2: false })
@@ -259,7 +259,7 @@ class App extends Component {
       exchangeInstance = instance;
       return exchangeInstance.depositToken(symbolName, amount, { from: that.state.account });
     }).then(function (txResult) {
-      console.log(txResult);
+   
       that.updateBalanceExchange();
       that.setState({ tokenAllowanceAmount: that.state.tokenAllowanceAmount - Number(amount), managementState: "success", managementStatus: `Token(s) successfully deposited into your account on the Exchange. Tx: ${txResult.tx}`, tokenDepositLoading: false });
     }).catch(function (e) {
@@ -285,7 +285,7 @@ class App extends Component {
       exchangeInstance = instance;
       return exchangeInstance.withdrawToken(symbolName, amount, { from: that.state.account });
     }).then(function (txResult) {
-      console.log(txResult);
+     
       that.updateBalanceExchange();
       that.setState({ managementState: "success", managementStatus: "Token(s) successfully withdrawn from your account on the Exchange", tokenWithdrawLoading: false });
     }).catch(function (e) {
@@ -326,7 +326,7 @@ class App extends Component {
       exchangeInstance = instance;
       return exchangeInstance.addToken(nameOfToken, addressOfToken, { from: that.state.account });
     }).then(function (txResult) {
-      console.log(txResult);
+      
       that.updateTokenBalance()
       that.setState({ tokenState: "success", loadingAddToken: false, managementTokenStatus: "Token succesfully added to Exchange" });
     }).catch(function (e) {
@@ -370,7 +370,7 @@ class App extends Component {
       exchangeInstance = instance;
       return exchangeInstance.buyToken(symbolName, priceInWei, amount, { from: that.state.account });
     }).then(function (txResult) {
-      console.log(txResult);
+      
       let tx = txResult.txtx
       if (txResult.logs[0].event === "LimitBuyOrderCreated") {
         that.setState({ buyLoading: false, tradeState: "success", tokenTradingStatus: `Buy order succesfully created. Tx: ${tx}` });

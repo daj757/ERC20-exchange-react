@@ -61,7 +61,7 @@ export default function TokenTrading(props) {
                                 <Segment circular style={{ width: 175, height: 175 }}>
                                     <Header as='h2'>
                                         Ether
-        <Header.Subheader>{parseFloat(props.etherBalance).toFixed(3)}</Header.Subheader>
+        <Header.Subheader>{parseFloat(props.etherBalance).toFixed(4)}</Header.Subheader>
                                     </Header>
                                 </Segment>
                             </Grid.Column>
@@ -69,7 +69,7 @@ export default function TokenTrading(props) {
                                 <Segment circular inverted style={{ width: 175, height: 175 }}>
                                     <Header as='h2' inverted>
                                         Tokens
-        <Header.Subheader>{props.tokenBalanceInExchange.toFixed(3)}</Header.Subheader>
+        <Header.Subheader>{props.tokenBalanceInExchange.toFixed(2)}</Header.Subheader>
                                     </Header>
                                 </Segment>
                             </Grid.Column>

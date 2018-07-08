@@ -6,21 +6,39 @@ import {
     Image,
     Header,
     Responsive,
-    Card
+    Card,
+    Message
 } from 'semantic-ui-react'
 
+
 export default class LandingPage extends Component {
+    state = { visible: true }
+    handleDismiss = () => {
+        this.setState({ visible: false})
+    
+      }
     
     render() {
         const web3 = this.props.metaMask;
+        const network = this.props.network.toString()
         let card;
+        let MessageNetwork;
+        if(network === "Rinkeby test network." || network === "the Mainnet."|| this.state.visible === false){
+            MessageNetwork = null
+        }
+        else {
+            MessageNetwork = <Message info onDismiss={this.handleDismiss} style={{ position: 'absolute',
+            top: '10%',
+            left: '4%',
+    }}>To access this site you must be logged onto the Main net or Rinkeby test network.</Message>
+        }
         if(web3) {
             card = <Card
             style={{
                 position: 'absolute',
                 top: '20%',
                 left: '65%',
-                opacity: '0.7',
+                
                 wordWrap: 'break-word',
                 marginBottom: "20px"
             }}>
@@ -65,7 +83,7 @@ export default class LandingPage extends Component {
         >
             <Image src={exchange1} fluid  />
             <Responsive minWidth={900}>
-            
+            {MessageNetwork}
             {card}
                 <Header
                     size="huge"
@@ -76,7 +94,7 @@ export default class LandingPage extends Component {
                         textTransform: 'uppercase',
                         transform: 'translate(-50%, -50%)',
                         color: 'white',
-                        opacity: '0.7',
+                        opacity: '0.9',
                         textAlign: 'center',
                         fontSize: '55px',
                         fontFamily: 'Russo One, sans-serif',
