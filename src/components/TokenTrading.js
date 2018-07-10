@@ -135,7 +135,6 @@ export default function TokenTrading(props) {
                                             onChange={props.handleChangeEther}
                                         />
                                         <Form.Input
-
                                             required
                                             error={props.tokenAmountToSellFieldError}
                                             placeholder="Amount to sell"

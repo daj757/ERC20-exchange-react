@@ -34,13 +34,13 @@ export default class LandingPage extends Component {
         }
         if(web3) {
             card = <Card
+            id="card"
             style={{
                 position: 'absolute',
-                top: '20%',
+                top: '14%',
                 left: '65%',
-                
                 wordWrap: 'break-word',
-                marginBottom: "20px"
+                marginBottom: "20px" 
             }}>
             <Image src={account} />
             <Card.Content>
@@ -94,7 +94,7 @@ export default class LandingPage extends Component {
                         textTransform: 'uppercase',
                         transform: 'translate(-50%, -50%)',
                         color: 'white',
-                        opacity: '0.9',
+                        
                         textAlign: 'center',
                         fontSize: '55px',
                         fontFamily: 'Russo One, sans-serif',
@@ -115,7 +115,7 @@ export default class LandingPage extends Component {
                         textTransform: 'uppercase',
                         transform: 'translate(-50%, -50%)',
                         color: 'white',
-                        opacity: '0.6',
+                        opacity: '0.8',
                         textAlign: 'center',
                         fontSize: '45px',
                         fontFamily: 'Russo One, sans-serif',
@@ -136,7 +136,7 @@ export default class LandingPage extends Component {
                         textTransform: 'uppercase',
                         transform: 'translate(-50%, -50%)',
                         color: 'white',
-                        opacity: '0.6',
+                        opacity: '0.8',
                         textAlign: 'center',
                         fontSize: '15px',
                         fontFamily: 'Russo One, sans-serif',

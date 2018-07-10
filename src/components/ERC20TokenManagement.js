@@ -40,13 +40,13 @@ export default function Erc20TokenManagement(props) {
                         <Segment style={{ marginBottom: "25px" }} color="blue">
                             <Header as='h4' textAlign='center'>
                                 For demonstration purposes the add token fields have been added for you. This will contact a smart contract for an ERC20 token I have created
-                                called "FIXED". The contract will give you 100,000 FIXED tokens into your account.
+                                called "DJ". The contract will give you 100,000 DJ tokens into your account that you can then deposit into the exchange.
                     </Header>
                             <Header as='h4' textAlign='center'>
-                                {`Token address is ${props.address}`}
+                                {`Token address: ${props.address}`}
                             </Header>
                             <Header as='h4' textAlign='center'>
-                                {`Exchange address is ${props.exchangeAddress}`}
+                                {`Exchange address: ${props.exchangeAddress}`}
                             </Header>
                             <Header as="h4" textAlign="center" >You have {props.tokenAmount} Tokens in your account</Header>
                         </Segment>
@@ -59,15 +59,15 @@ export default function Erc20TokenManagement(props) {
                                         <Form.Input
                                             required
                                             placeholder='Token Name'
-                                            name='tokenName'
-                                            value={props.tokenName}
+                                            name='tokenName1'
+                                            value={props.tokenName1}
                                             onChange={props.handleLetterChange}
                                         />
                                         <Form.Input
                                             required
                                             placeholder="Token Address"
-                                            name="tokenAddress"
-                                            value={props.address}
+                                            name="tokenAddressInput"
+                                            value={props.tokenAddressInput}
                                             onChange={props.handleLetterChange}
                                         />
                                         <Form.Button color='blue' labelPosition='left' icon='add' content='Add Token' />
@@ -87,9 +87,9 @@ export default function Erc20TokenManagement(props) {
                                         />
                                         <Form.Input
                                             required
-                                            placeholder="Address"
-                                            name="exchangeAddress"
-                                            value={props.exchangeAddress}
+                                            placeholder="Exchange Address"
+                                            name="exchangeAddressInput"
+                                            value={props.exchangeAddressInput}
                                             onChange={props.handleLetterChange}
                                         />
                                         <Form.Button color='blue' labelPosition='left' icon='key' content='Allow' />

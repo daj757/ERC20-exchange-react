@@ -82,8 +82,8 @@ export default function ExchangeManagement(props) {
                                     <Form.Input
                                         required
                                         placeholder='Token Name'
-                                        name='tokenName'
-                                        value={props.tokenName}
+                                        name='tokenName3'
+                                        value={props.tokenName3}
                                         onChange={props.handleChangeLetters}>
                                     </Form.Input>
                                     <Form.Input

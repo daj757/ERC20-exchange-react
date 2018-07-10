@@ -1,4 +1,8 @@
 /* PAGE */
+#card{
+  border-bottom: 20px
+}
+
 #exchangeManagement h1  {
   color: white 
 }
