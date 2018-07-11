@@ -40,7 +40,7 @@ export default function Erc20TokenManagement(props) {
                         <Segment style={{ marginBottom: "25px" }} color="blue">
                             <Header as='h4' textAlign='center'>
                                 For demonstration purposes the add token fields have been added for you. This will contact a smart contract for an ERC20 token I have created
-                                called "DJ". The contract will give you 100,000 DJ tokens into your account that you can then deposit into the exchange.
+                                called "PLAY". The contract will give you 100,000 PLAY tokens into your account that you can then deposit into the exchange.
                     </Header>
                             <Header as='h4' textAlign='center'>
                                 {`Token address: ${props.address}`}
@@ -54,7 +54,7 @@ export default function Erc20TokenManagement(props) {
                         <Grid style={{ padding: "20px" }} verticalAlign="middle">
                             <Grid.Row columns={3}>
                                 <Grid.Column>
-                                    <Header as="h3" >Add token to exchange</Header>
+                                    <Header as="h3" >1. Add token to exchange</Header>
                                     <Form loading={props.loadingAdd} onSubmit={props.handleTokenAddition}>
                                         <Form.Input
                                             required
@@ -75,7 +75,7 @@ export default function Erc20TokenManagement(props) {
                                     </Form>
                                 </Grid.Column>
                                 <Grid.Column>
-                                    <Header as="h3" >Allow tokens to be taken from your account and put into the exchange.</Header>
+                                    <Header as="h3" >2. Allow tokens to be taken from your account and put into the exchange.</Header>
                                     <Form loading={props.loading} onSubmit={props.handleTokenAllowance}>
                                         <Form.Input
                                             required

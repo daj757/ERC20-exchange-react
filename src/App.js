@@ -54,8 +54,8 @@ class App extends Component {
       loadingSendToken: false,
       loadingAddToken: false,
       tokenAmountDeposit: "",
-      tokenName: "DJ",
-      tokenName1: "DJ",
+      tokenName: "PLAY",
+      tokenName1: "PLAY",
       tokenName2: "",
       tokenName3: "",
       tokenAmountWithdraw: "",
@@ -81,7 +81,9 @@ class App extends Component {
       tokenPriceToBuyFieldError: false,
       tokenPriceToSellFieldError: false,
       tokenAllowanceAmount: 0,
-      myToken: "DJ"
+      myToken: "PLAY",
+      buyWarning: true,
+      sellWarning: true
 
     }
     this.instantiateContract = this.instantiateContract.bind(this);
@@ -143,9 +145,21 @@ class App extends Component {
       return exchangeInstance.getBalance.call(that.state.myToken, { from: that.state.account });
     }).then(function (balance) {
       that.setState({ balanceTokenInExchange: balance.toNumber() })
+      if (that.state.balanceTokenInExchange > 0) {
+        that.setState({ sellWarning: false })
+      }
+      else {
+        that.setState({ sellWarning: true })
+      }
       return exchangeInstance.getEthBalanceInWei.call({ from: that.state.account });
     }).then(function (balance) {
       that.setState({ balanceEth: that.state.web3.fromWei(balance.toNumber(), "ether") })
+      if (that.state.balanceEth > 0) {
+        that.setState({ buyWarning: false })
+      }
+      else {
+        that.setState({ buyWarning: true })
+      }
     }).catch(function (e) {
       console.log(e);
       that.setState({ status: "Error getting balance. See log." })
@@ -257,7 +271,6 @@ class App extends Component {
     var exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
       exchangeInstance = instance;
-      console.log(that.state.account, symbolName, amount)
       return exchangeInstance.depositToken(symbolName, amount, { from: that.state.account });
     }).then(function (txResult) {
 
@@ -282,12 +295,12 @@ class App extends Component {
 
     var exchangeInstance2;
     ExchangeContract.deployed().then(function (instance) {
-      console.log(instance, symbolName2, amount2, that.state.account)
+
       exchangeInstance2 = instance;
       return exchangeInstance2.withdrawToken(symbolName2, amount2, { from: that.state.account })
     })
       .then(function (txResult) {
-        console.log(txResult)
+
         that.updateBalanceExchange();
         that.setState({ tokenName2: "", tokenAmountWithdraw: "", managementState: "success", managementStatus: "Token(s) successfully withdrawn from your account on the Exchange", tokenWithdrawLoading: false });
       })
@@ -362,19 +375,20 @@ class App extends Component {
   buyToken() {
     var that = this;
 
-    let symbolName = that.state.tokenNameToBuy;
-    let priceInWei = parseInt(that.state.tokenPriceToBuy, 10)
-    let amount = parseInt(that.state.tokenAmountToBuy, 10)
+    let symbolName1 = that.state.tokenNameToBuy;
+    let priceInWei1 = parseInt(that.state.tokenPriceToBuy, 10)
+    let amount1 = parseInt(that.state.tokenAmountToBuy, 10)
 
     that.setState({ buyLoading: true, tradeState: "info", tokenTradingStatus: "Attempting to buy token(s) on Exchange" });
 
-    let exchangeInstance;
+    let exchangeInstance1;
     ExchangeContract.deployed().then(function (instance) {
-      console.log(instance, symbolName, priceInWei, amount, that.state.account)
-      exchangeInstance = instance;
-      return exchangeInstance.buyToken(symbolName, priceInWei, amount, { from: that.state.account });
+
+      exchangeInstance1 = instance;
+
+      return exchangeInstance1.buyToken(symbolName1, priceInWei1, amount1, { from: that.state.account });
     }).then(function (txResult) {
-      console.log(txResult)
+
       let tx = txResult.tx
       if (txResult.logs[0].event === "LimitBuyOrderCreated") {
         that.setState({ buyLoading: false, tradeState: "success", tokenTradingStatus: `Buy order succesfully created. Tx: ${tx}` });
@@ -383,6 +397,7 @@ class App extends Component {
 
         that.setState({ buyLoading: false, tradeState: "success", tokenTradingStatus: `Token(s) successfully purchased. Tx: ${tx}` });
       }
+      that.setState({ tokenPriceToBuy: "", tokenNameToBuy: "", tokenAmountToBuy: "" });
       that.updateBalanceExchange();
       that.updateOrderBook()
     }).catch(function (e) {
@@ -404,9 +419,10 @@ class App extends Component {
     let exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
       exchangeInstance = instance;
+
       return exchangeInstance.sellToken(symbolName, priceInWei, amount, { from: that.state.account });
     }).then(function (txResult) {
-      console.log(txResult)
+
       let tx = txResult.tx
       if (txResult.logs[0].event === "LimitSellOrderCreated") {
         that.setState({ sellLoading: false, tradeState: "success", tokenTradingStatus: `Sell order created. Tx: ${tx}` });
@@ -414,6 +430,7 @@ class App extends Component {
       if (txResult.logs[0].event === "SellOrderFulfilled") {
         that.setState({ sellLoading: false, tradeState: "success", tokenTradingStatus: `Token(s) successfully sold. Tx: ${tx} ` });
       }
+      that.setState({ tokenPriceToSell: "", tokenNameToSell: "", tokenAmountToSell: "" });
       that.updateBalanceExchange();
       that.updateOrderBook()
     }).catch(function (e) {
@@ -421,7 +438,7 @@ class App extends Component {
       that.setState({ tokenPriceToSell: "", tokenNameToSell: "", sellLoading: false, tradeState: "error", tokenAmountToSell: "", tokenTradingStatus: "There was an error attempting to create a sell order" });
     })
   }
-
+  //hardcoded mytoken updates for getOrderBook and getSellBook not dynamic expecting only Play tokens in exchange
   // display outstanding buy and sell orders on trading.html
   updateOrderBook() {
     let that = this
@@ -429,7 +446,7 @@ class App extends Component {
     let exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
       exchangeInstance = instance;
-      return exchangeInstance.getBuyOrderBook(that.state.tokenName, { from: that.state.account });
+      return exchangeInstance.getBuyOrderBook(that.state.myToken, { from: that.state.account });
     }).then(function (orderbook) {
 
       if (orderbook[0].length === 0) {
@@ -438,9 +455,9 @@ class App extends Component {
 
       for (let i = 0; i < orderbook[0].length; i++) {
         that.setState({ buyOrders: that.state.buyOrders.concat(`Buy ${orderbook[1][i]} ${that.state.tokenName} @ ${orderbook[0][i]} wei`) })
-      
+
       }
-      return exchangeInstance.getSellOrderBook(that.state.tokenName, { from: that.state.account });
+      return exchangeInstance.getSellOrderBook(that.state.myToken, { from: that.state.account });
     }).then(function (orderbook) {
 
       if (orderbook[0].length === 0) {
@@ -519,6 +536,14 @@ class App extends Component {
     this.addTokenToExchange()
   }
 
+  handleBuyToken = () => {
+    this.buyToken()
+  }
+
+  handleSellToken = () => {
+    this.sellToken()
+  }
+
   render() {
     return (
       <div className="App" >
@@ -594,8 +619,8 @@ class App extends Component {
           handleChangeEther={this.handleChangeEther.bind(this)}
           tokenAmountToSellFieldError={this.state.tokenAmountToSellFieldError}
           tokenAmountToBuyFieldError={this.state.tokenAmountToBuyFieldError}
-          buyToken={this.buyToken.bind(this)}
-          sellToken={this.sellToken.bind(this)}
+          buyToken={this.handleBuyToken.bind(this)}
+          sellToken={this.handleSellToken.bind(this)}
           sellOrders={this.state.sellOrders}
           buyOrders={this.state.buyOrders}
           tradeState={this.state.tradeState}
@@ -605,6 +630,8 @@ class App extends Component {
           tokenPriceToSell={this.state.tokenPriceToSell}
           tokenPriceToSellFieldError={this.state.tokenPriceToSellFieldError}
           tokenPriceToBuyFieldError={this.state.tokenPriceToBuyFieldError}
+          buyWarning={this.state.buyWarning}
+          sellWarning={this.state.sellWarning}
 
         />
         <Footer />

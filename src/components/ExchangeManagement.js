@@ -48,7 +48,7 @@ export default function ExchangeManagement(props) {
                     <Grid verticalAlign="top" padded relaxed="very" >
                         <Grid.Row columns={2}>
                             <Grid.Column>
-                                <Header as="h3" >Deposit and withdraw Ether from exchange.</Header>
+                                <Header as="h3" >Deposit/Withdraw Ether from exchange.</Header>
                                 <Form style={{ paddingTop: "10px", paddingBottom: "20px" }} loading={props.ethLoading} onSubmit={props.handleSubmitDeposit}>
                                     <Form.Input
                                         error={props.amountDepositFieldError}

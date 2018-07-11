@@ -114,7 +114,7 @@ contract FixedSupplyToken is ERC20Interface, Owned {
     // Constructor
     // ------------------------------------------------------------------------
     function FixedSupplyToken() public {
-        symbol = "DJ";
+        symbol = "PLAY";
         name = "Example Fixed Supply Token";
         decimals = 18;
         _totalSupply = 100000;

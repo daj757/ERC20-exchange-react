@@ -49,6 +49,22 @@ function TradeOrders(props) {
 
 
 export default function TokenTrading(props) {
+    let buyWarning
+    let sellWarning
+
+    if (props.buyWarning) {
+        buyWarning = <h4 style={{ color: "pink", marginTop: "-2px" }} >Must have Ether in exchange before making buy order.</h4>
+    }
+    else {
+        buyWarning = null
+    }
+
+    if (props.sellWarning) {
+        sellWarning = <h4 style={{ color: "pink", marginTop: "-2px" }} >Must have Tokens in exchange before making sell order.</h4>
+    }
+    else {
+        sellWarning = null
+    }
 
     return (
         <div>
@@ -80,6 +96,7 @@ export default function TokenTrading(props) {
                             <Grid.Row columns={2} style={{ marginTop: "20px" }}>
                                 <Grid.Column>
                                     <Header as="h3" >Buy Token</Header>
+                                    {buyWarning}
                                     <Form loading={props.buyLoading} onSubmit={props.buyToken}>
                                         <Form.Input
                                             required
@@ -104,7 +121,7 @@ export default function TokenTrading(props) {
                                             value={props.tokenAmountToBuy}
                                             onChange={props.handleChangeEther}
                                         />
-                                        <Form.Button color='green' labelPosition='left' icon='add' content='Buy Token' />
+                                        <Form.Button disabled={props.buyWarning} color='green' labelPosition='left' icon='add' content='Buy Token' />
 
                                     </Form>
                                     <div style={{ marginTop: "40px" }}>
@@ -118,6 +135,7 @@ export default function TokenTrading(props) {
                                 </Grid.Column>
                                 <Grid.Column>
                                     <Header as="h3" >Sell Token</Header>
+                                    {sellWarning}
                                     <Form loading={props.sellLoading} onSubmit={props.sellToken}>
                                         <Form.Input
                                             required
@@ -142,7 +160,7 @@ export default function TokenTrading(props) {
                                             value={props.tokenAmountToSell}
                                             onChange={props.handleChangeEther}
                                         />
-                                        <Form.Button color='red' labelPosition='left' icon='minus' content='Sell Token' />
+                                        <Form.Button disabled={props.sellWarning} color='red' labelPosition='left' icon='minus' content='Sell Token' />
                                     </Form>
                                     <div style={{ marginTop: "40px" }}>
                                         <Header as='h2' attached='top'>
