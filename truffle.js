@@ -17,13 +17,14 @@ module.exports = {
       network_id: "4"
     },
     live: {
-      provider: () => {
+      provider: function () {
         return new HDWalletProvider(keys.mainNetPhrase, keys.infuraMainNet)
       },
-      network_id: "1",
 
-      gas: 7000000,
-      gasPrice: 7
+      network_id: 1,
+
+      gas: 7500000,
+      gasPrice: 15
 
     }
 

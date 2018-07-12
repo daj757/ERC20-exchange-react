@@ -126,7 +126,7 @@ export default function ExchangeManagement(props) {
 
 
                         <p style={{ fontSize: "20px" }}>
-                            This site is built to allow you to exchange ERC20 standard tokens on both the Rinkeby and the Main net on the Ethereum
+                            This site is built to allow you to exchange ERC20 standard tokens on the Rinkeby test net on the Ethereum
                             network. To access and interact with the site please use a desktop browser with Metamask installed.
                             Find out more about Metamask and interacting with the Ethereum network by visiting the site below.
       </p>
