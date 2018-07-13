@@ -106,6 +106,7 @@ export default class LandingPage extends Component {
 
             </Responsive>
             <Responsive maxWidth={899} minWidth={768}>
+            {MessageNetwork}
                 <Header
                     size="huge"
                     style={{
