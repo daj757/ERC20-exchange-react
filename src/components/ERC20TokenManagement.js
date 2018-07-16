@@ -6,7 +6,7 @@ import {
     Container,
     Grid,
     Form,
-    Message
+    Message,
 } from 'semantic-ui-react'
 import market from "../../public/static/images/market.jpg"
 function TokenMessage(props) {
@@ -54,6 +54,7 @@ export default function Erc20TokenManagement(props) {
                         <Grid style={{ padding: "20px" }} verticalAlign="middle">
                             <Grid.Row columns={3}>
                                 <Grid.Column>
+
                                     <Header as="h3" >1. Add token to exchange</Header>
                                     <Form loading={props.loadingAdd} onSubmit={props.handleTokenAddition}>
                                         <Form.Input
@@ -75,7 +76,7 @@ export default function Erc20TokenManagement(props) {
                                     </Form>
                                 </Grid.Column>
                                 <Grid.Column>
-                                    <Header as="h3" >2. Allow tokens to be withdrawn/deposited into and from the exchange.</Header>
+                                    <Header as="h3" >2. Allow tokens to be deposited/withdrawn into and from the exchange.</Header>
                                     <Form loading={props.loading} onSubmit={props.handleTokenAllowance}>
                                         <Form.Input
                                             required
@@ -98,7 +99,7 @@ export default function Erc20TokenManagement(props) {
 
                                 </Grid.Column>
                                 <Grid.Column>
-                                    <Header as="h3" >Send Tokens to Someone</Header>
+                                    <Header as="h3" >Send Tokens to someone</Header>
                                     <Form loading={props.loadingSend} onSubmit={props.handleSend}>
                                         <Form.Input
                                             required
