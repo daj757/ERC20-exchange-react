@@ -75,7 +75,7 @@ export default function Erc20TokenManagement(props) {
                                     </Form>
                                 </Grid.Column>
                                 <Grid.Column>
-                                    <Header as="h3" >2. Allow tokens to be taken from your account and put into the exchange.</Header>
+                                    <Header as="h3" >2. Allow tokens to be withdrawn/deposited into and from the exchange.</Header>
                                     <Form loading={props.loading} onSubmit={props.handleTokenAllowance}>
                                         <Form.Input
                                             required

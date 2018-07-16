@@ -23,14 +23,14 @@ export default class LandingPage extends Component {
         const network = this.props.network.toString()
         let card;
         let MessageNetwork;
-        if(network === "Rinkeby test network."|| this.state.visible === false){
+        if(network === "Rinkeby test network."|| this.state.visible === false || network === "the Mainnet."){
             MessageNetwork = null
         }
         else {
             MessageNetwork = <Message info onDismiss={this.handleDismiss} style={{ position: 'absolute',
             top: '10%',
             left: '4%',
-    }}>To interact with this smart contract you must be logged onto the Rinkeby test network.</Message>
+    }}>To interact with this smart contract you must be logged onto the Mainnet or the Rinkeby test network.</Message>
         }
         if(web3) {
             card = <Card

@@ -31,7 +31,11 @@ function MainMessage(props) {
             return null
     }
 }
+
+
 export default function ExchangeManagement(props) {
+    let amountAllowed;
+    props.tokenAllowanceAmount < 0 ? amountAllowed = 0 : amountAllowed = props.tokenAllowanceAmount
 
     return (
         <div style={{ backgroundImage: `url(${money})`, backgroundSize: "cover" }} id="exchangeManagement">
@@ -41,7 +45,7 @@ export default function ExchangeManagement(props) {
                     <Segment.Group style={{ marginBottom: "25px" }} horizontal>
                         <Segment >Ether in exchange: {props.balanceEth}</Segment>
                         <Segment >Tokens in Exchange: {props.balanceTokenInExchange}</Segment>
-                        <Segment >You have allowed {props.tokenAllowanceAmount} tokens to be deposited into exchange.</Segment>
+                        <Segment >You have allowed {amountAllowed} tokens to be deposited/withdrawn from exchange.</Segment>
                     </Segment.Group>
 
                     <MainMessage managementState={props.managementState} managementStatus={props.managementStatus} />
@@ -77,7 +81,7 @@ export default function ExchangeManagement(props) {
 
                             </Grid.Column>
                             <Grid.Column>
-                                <Header as="h3" >Deposit any custom ERC20 token below. First head to ERC20 token management to add/allow token(s) into exchange.</Header>
+                                <Header as="h3" >Deposit any custom ERC20 token below. First head to ERC20 token management to add/allow token(s) into and from the exchange.</Header>
                                 <Form loading={props.tokenDepositLoading} style={{ marginTop: '20px', paddingBottom: "20px" }} onSubmit={props.handleTokenDeposit}>
                                     <Form.Input
                                         required
@@ -92,7 +96,7 @@ export default function ExchangeManagement(props) {
                                         placeholder='Amount to Deposit'
                                         name='tokenAmountDeposit'
                                         value={props.tokenAmountDeposit}
-                                        onChange={props.handleChangeEther}>
+                                        onChange={props.handleDepositWithdraw}>
                                     </Form.Input>
                                     <Form.Button color='blue' labelPosition='left' icon='money bill alternate outline' content='Deposit' />
                                 </Form>
@@ -110,7 +114,7 @@ export default function ExchangeManagement(props) {
                                         placeholder='Amount to Withdraw'
                                         name='tokenAmountWithdraw'
                                         value={props.tokenAmountWithdraw}
-                                        onChange={props.handleChangeEther}>
+                                        onChange={props.handleDepositWithdraw}>
                                     </Form.Input>
                                     <Form.Button color='blue' labelPosition='left' icon='money bill alternate outline' content='Withdraw' />
                                 </Form>
@@ -126,7 +130,7 @@ export default function ExchangeManagement(props) {
 
 
                         <p style={{ fontSize: "20px" }}>
-                            This site is built to allow you to exchange ERC20 standard tokens on the Rinkeby test net on the Ethereum
+                            This site is built to allow you to exchange ERC20 standard tokens on the Rinkeby test net and the Mainnet on the Ethereum
                             network. To access and interact with the site please use a desktop browser with Metamask installed.
                             Find out more about Metamask and interacting with the Ethereum network by visiting the site below.
       </p>

@@ -1,6 +1,12 @@
 // Allows us to use ES6 in our migrations and tests.
+// const Web3 = require("web3");
+// const web3 = new Web3();
 var keys = require('./keys.js');
 require("babel-register");
+// const ProviderEngine = require('web3-provider-engine')
+// var engine = new ProviderEngine()
+// const FilterSubprovider = require('web3-provider-engine/subproviders/filters.js')
+// engine.addProvider(new FilterSubprovider())
 var HDWalletProvider = require("truffle-hdwallet-provider");
 module.exports = {
   solc: { optimizer: { enabled: true, runs: 200 } },
@@ -20,11 +26,9 @@ module.exports = {
       provider: function () {
         return new HDWalletProvider(keys.mainNetPhrase, keys.infuraMainNet)
       },
-
-      network_id: 1,
-
       gas: 7500000,
-      gasPrice: 15
+      gasPrice: 40000000000,
+      network_id: "1"
 
     }
 

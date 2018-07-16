@@ -268,14 +268,14 @@ class App extends Component {
     var that = this;
 
     that.setState({ managementState: "info", managementStatus: "Initiating deposit of Token into your account on the Exchange....Please wait", tokenDepositLoading: true });
-    var exchangeInstance;
+    let exchangeInstance;
     ExchangeContract.deployed().then(function (instance) {
       exchangeInstance = instance;
       return exchangeInstance.depositToken(symbolName, amount, { from: that.state.account });
     }).then(function (txResult) {
 
       that.updateBalanceExchange();
-      that.setState({ tokenAmountDeposit: "", tokenName: "", tokenAllowanceAmount: that.state.tokenAllowanceAmount - Number(amount), managementState: "success", managementStatus: `Token(s) successfully deposited into your account on the Exchange. Tx: ${txResult.tx}`, tokenDepositLoading: false });
+      that.setState({ tokenAmountDeposit: "", tokenAllowanceAmount: that.state.tokenAllowanceAmount - Number(amount), managementState: "success", managementStatus: `Token(s) successfully deposited into your account on the Exchange. Tx: ${txResult.tx}`, tokenDepositLoading: false });
     }).catch(function (e) {
       console.log(e);
       that.setState({ managementState: "error", managementStatus: "There was an error depositing Token into your account on the Exchange", tokenDepositLoading: false });
@@ -293,17 +293,16 @@ class App extends Component {
       tokenWithdrawLoading: true
     });
 
-    var exchangeInstance2;
+    let exchangeInstance2;
     ExchangeContract.deployed().then(function (instance) {
 
       exchangeInstance2 = instance;
       return exchangeInstance2.withdrawToken(symbolName2, amount2, { from: that.state.account })
+    }).then(function (txResult) {
+      console.log(txResult)
+      that.updateBalanceExchange();
+      that.setState({ tokenAmountWithdraw: "", tokenAllowanceAmount: that.state.tokenAllowanceAmount - Number(amount2), managementState: "success", managementStatus: "Token(s) successfully withdrawn from your account on the Exchange. TX: " + txResult.tx, tokenWithdrawLoading: false });
     })
-      .then(function (txResult) {
-
-        that.updateBalanceExchange();
-        that.setState({ tokenName2: "", tokenAmountWithdraw: "", managementState: "success", managementStatus: "Token(s) successfully withdrawn from your account on the Exchange", tokenWithdrawLoading: false });
-      })
       .catch(function (error) {
         console.log(error);
         that.setState({ managementState: "error", managementStatus: "There was an error withdrawing Token(s) from your account on the Exchange", tokenWithdrawLoading: false });
@@ -482,6 +481,15 @@ class App extends Component {
 
   //Event handlers
 
+  handleDepositWithdraw = (e, { name, value }) => {
+    if (isFinite(value) && value <= this.state.tokenAllowanceAmount && value >= 0) {
+      this.setState({ [name]: value, [name + "FieldError"]: false })
+    }
+    else {
+      this.setState({ [name + "FieldError"]: true })
+    }
+  }
+
   handleChangeEther = (e, { name, value }) => {
     if (isFinite(value) && value >= 0) {
       this.setState({ [name]: value, [name + "FieldError"]: false })
@@ -555,7 +563,8 @@ class App extends Component {
           tokenBalance={this.state.balanceToken}
           exchangeEther={this.state.balanceEth}
         />
-        <ExchangeManagement managementState={this.state.managementState}
+        <ExchangeManagement handleDepositWithdraw={this.handleDepositWithdraw.bind(this)}
+          managementState={this.state.managementState}
           managementStatus={this.state.managementStatus}
           ethLoading={this.state.ethLoading} balanceEth={this.state.balanceEth}
           handleTokenDeposit={this.handleTokenDeposit.bind(this)}
